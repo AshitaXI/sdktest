@@ -100,6 +100,11 @@ local function run_test(test, cnt)
         res, err = pcall(function ()
             m.init(cnt);
         end);
+        
+        -- Store the error if one is present..
+        if (not res) then
+            table.insert(errors, err);
+        end
 
         -- Execute the test..
         if (res) then
