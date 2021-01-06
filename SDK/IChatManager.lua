@@ -84,7 +84,7 @@ function test.init()
 
     -- Create a basic script to be executed..
     local f = io.open(string.format('%s/scripts/sdktest.txt', AshitaCore:GetInstallPath()), 'w');
-    assert(f ~= nil, 'failed to create test script file..');
+    assert(f ~= nil, 'failed to create test script file.');
     f:write('/echo sdktest:executescript');
     f:close();
 end
