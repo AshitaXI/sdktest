@@ -1,8 +1,27 @@
 {
+    "Lua.diagnostics.disable": [
+        "undefined-field"
+    ],
     "Lua.diagnostics.globals": [
+        // Global Tables
         "addon",
         "ashita",
+        // Global Objects
         "AshitaCore",
-        "LogManager"
+        "LogManager",
+        // Global Functions
+        "GetEntity",
+        "GetPlayerEntity",
+        // Enums
+        "PluginFlags",
+        "CommandMode",
+        "ChatInputOpenStatus",
+        "LogLevel",
+        "FrameAnchor",
+        "KeyboardEvent",
+        "MouseEvent",
+        "FontBorderFlags",
+        "FontCreateFlags",
+        "FontDrawFlags"
     ]
 }
