@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
-]]--
+--]]
 
 --[[
 Flags Helper Module
@@ -47,7 +47,7 @@ You can also test if a flag is set via:
 Once all testing has completed, you can validate all your flags have been met/set via:
 
     flags.validate();
-]]--
+--]]
 
 --[[
 * The main flags module table.
