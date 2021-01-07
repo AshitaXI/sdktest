@@ -641,7 +641,7 @@ function test.exec()
         assert(i ~= nil, 'GetItemById returned an unexpected value.');
 
         p:SetTextureFromMemory(i.Bitmap, i.ImageSize + 0x0E, 0xFF000000);
-        coroutine.sleep(0.5);
+        coroutine.sleep(0.2);
     end
 
     -- Render some item icons..
@@ -656,11 +656,11 @@ function test.exec()
 
     -- Set the primitive to the weakness status icon..
     p:SetTextureFromMemory(s1.Bitmap, s1.ImageSize + 0x0E, 0xFF000000);
-    coroutine.sleep(0.5);
+    coroutine.sleep(0.2);
 
     -- Set the primitive to the Ashita moogle icon that is cached..
     p:SetTextureFromResourceCache('ashita');
-    coroutine.sleep(0.5);
+    coroutine.sleep(0.2);
 
     -- Cleanup the test primitive..
     primManager:Delete('sdktest_resourceprim');
