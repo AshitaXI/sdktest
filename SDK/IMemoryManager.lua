@@ -34,6 +34,9 @@ end
 * Executes the test.
 --]]
 function test.exec()
+    --[[
+    TODO: The MemoryManager tests will be implemented soon.
+    --]]
 end
 
 --[[
