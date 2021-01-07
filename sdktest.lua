@@ -120,6 +120,7 @@ local function run_test(test, cnt)
 
         -- Cleanup the test..
         res, err = pcall(function ()
+            m.cleanup(cnt);
         end);
 
         -- Store the error if one is present..
