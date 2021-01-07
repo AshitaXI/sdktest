@@ -9,6 +9,8 @@
         // Global Objects
         "AshitaCore",
         "LogManager",
+        "RECT",
+        "SIZE",
         // Global Functions
         "GetEntity",
         "GetPlayerEntity",
