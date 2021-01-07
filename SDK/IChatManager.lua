@@ -97,6 +97,9 @@ function test.exec()
     local chatManager = AshitaCore:GetChatManager();
     assert(chatManager ~= nil, 'GetChatManager returned an unexpected value.');
 
+    -- Test queueing a command..
+    chatManager:QueueCommand(1, '/echo sdktest:queuecommand');
+
     -- Test writing to the chat log..
     chatManager:Write(1, false, 'sdktest:write');
     chatManager:AddChatMessage(1, false, 'sdktest:addchatmessage');
