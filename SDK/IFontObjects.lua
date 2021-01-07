@@ -463,6 +463,11 @@ function test.exec()
     v = p1:GetHeight();
     assert(v == 256, 'GetHeight returned an unexpected value.');
 
+    -- Test setting the primitive texture from a cached resource texture..
+    v = p1:SetTextureFromResourceCache('icons');
+    assert(v == true, 'SetTextureFromResourceCache returned an unexpected value.');
+    coroutine.sleepf(2);
+
     -- Cleanup the used primitive objects..
     cleanup_object(primManager, uniqueName1);
     cleanup_object(primManager, uniqueName2);
