@@ -34,6 +34,9 @@ end
 * Executes the test.
 --]]
 function test.exec()
+    --[[
+    TODO: The GuiManager bindings are currently not ready. To be finished later.
+    --]]
 end
 
 --[[
