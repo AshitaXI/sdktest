@@ -126,8 +126,8 @@ function test.exec()
             states that tell the addon what to do next based on expected input.
     --]]
 
-    print("\30\81[\30\06SDKTest\30\81] \30\81(\30\06IChatManager\30\81) \30\106Please open the chat input and enter the text: /sdktest 1234\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81(\30\06IChatManager\30\81) \30\106Do not press enter! Instead, press \30\06F9\30\106 when ready.\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IChatManager\30\81' \30\106Please open the chat input and enter the text: /sdktest 1234\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IChatManager\30\81' \30\106Do not press enter! Instead, press \30\06F9\30\106 when ready.\30\01");
 
     -- Set the test state and wait for the user to press F9..
     flags.set('sdktest:input_state_1');

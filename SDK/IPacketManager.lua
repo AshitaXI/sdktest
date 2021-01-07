@@ -115,7 +115,7 @@ function test.exec()
     end);
 
     -- Give tests time to complete and be processed by the client..
-    print("\30\81[\30\06SDKTest\30\81] \30\81(\30\06IPacketManager\30\81) \30\106waiting 3 seconds to allow packets to send..\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IPacketManager\30\81' \30\106waiting 3 seconds to allow packets to send..\30\01");
     coroutine.sleep(3);
 end
 
