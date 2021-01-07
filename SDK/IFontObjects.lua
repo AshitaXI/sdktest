@@ -512,5 +512,6 @@ Untested Functions:
     FontObject:SetFontFile()
 
     PrimitiveObject:SetTextureFromFile()
+    PrimitiveObject:SetTextureFromMemory()
 
 --]]
