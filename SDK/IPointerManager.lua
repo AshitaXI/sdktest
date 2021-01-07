@@ -34,18 +34,45 @@ end
 * Executes the test.
 --]]
 function test.exec()
+    -- Validate the manager object..
+    local pointerManager = AshitaCore:GetPointerManager();
+    assert(pointerManager ~= nil, 'GetPointerManager returned an unexpected value.');
+
+    -- Test adding a pointer.. (direct value)
+    pointerManager:Add('sdktest_pointer_1', 0x13371337);
+    local v = pointerManager:Get('sdktest_pointer_1');
+    assert(v == 0x13371337, 'Get returned an unexpected value.');
+
+    -- Test adding a pointer.. (scanned)
+    v = pointerManager:Add('sdktest_pointer_2', 'FFXiMain.dll', '8B560C8B042A8B0485', 9, 0);
+    assert(v == pointerManager:Get('entitymap'), 'Get returned an unexpected value.');
+
+    -- Test updating an existing pointer..
+    pointerManager:Add('sdktest_pointer_1', 0xDEADBEEF);
+    v = pointerManager:Get('sdktest_pointer_1');
+    assert(v == 0xDEADBEEF, 'Get returned an unexpected value.');
+
+    -- Test deleting pointers..
+    pointerManager:Delete('sdktest_pointer_1');
+    pointerManager:Delete('sdktest_pointer_2');
+
+    v = pointerManager:Get('sdktest_pointer_1');
+    assert(v == 0, 'Get returned an unexpected value.');
+    v = pointerManager:Get('sdktest_pointer_2');
+    assert(v == 0, 'Get returned an unexpected value.');
 end
 
 --[[
 * Invoked after the test has completed; allowing it to cleanup any generated resources.
 --]]
 function test.cleanup()
+    -- Cleanup test pointers..
+    local pointerManager = AshitaCore:GetPointerManager();
+    if (pointerManager ~= nil) then
+        pointerManager:Delete('sdktest_pointer_1');
+        pointerManager:Delete('sdktest_pointer_2');
+    end
 end
 
 -- Return the test module table..
 return test;
-
---[[
-Untested Functions:
-
---]]
