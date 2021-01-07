@@ -658,6 +658,10 @@ function test.exec()
     p:SetTextureFromMemory(s1.Bitmap, s1.ImageSize + 0x0E, 0xFF000000);
     coroutine.sleep(0.5);
 
+    -- Set the primitive to the Ashita moogle icon that is cached..
+    p:SetTextureFromResourceCache('ashita');
+    coroutine.sleep(0.5);
+
     -- Cleanup the test primitive..
     primManager:Delete('sdktest_resourceprim');
 end
