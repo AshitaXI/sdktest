@@ -42,19 +42,19 @@ function test.exec()
     just to see if anything fails.
     ]]--
 
-    -- Validate the main object..
+    -- Validate the manager object..
     local memManager = AshitaCore:GetMemoryManager();
     assert(memManager ~= nil, 'GetMemoryManager returned an unexpected value.');
 
-    -- Validate the memory object..
+    -- Validate the entity object..
     local entity = memManager:GetEntity();
     assert(entity ~= nil, 'GetEntity returned an unexpected value.');
 
-    -- Get the player entity.. (Using global helper..)
+    -- Get the player entity.. (Using global helper.)
     local p = GetPlayerEntity();
     assert(p ~= nil, 'GetPlayerEntity returned an unexpected value.');
 
-    -- Get the player entity.. (Using global helper..)
+    -- Get the player entity.. (Using global helper.)
     local e = GetEntity(p.TargetIndex);
     assert(e ~= nil, 'GetEntity returned an unexpected value.');
     assert(p.TargetIndex == e.TargetIndex, 'unexpected target index found between entities.');
