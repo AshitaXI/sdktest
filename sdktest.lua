@@ -30,22 +30,31 @@ addon.link      = 'https://ashitaxi.com/';
 --]]
 local registered_tests = {
     -- Main Objects
-    { cmd = '/sdktest ashitacore',            file = 'SDK.IAshitaCore',             desc = 'Tests the IAshitaCore object.' },
-    { cmd = '/sdktest logmanager',            file = 'SDK.ILogManager',             desc = 'Tests the ILogManager object.' },
+    { cmd = '/sdktest ashitacore',              file = 'SDK.IAshitaCore',               desc = 'Tests the IAshitaCore object.' },
+    { cmd = '/sdktest logmanager',              file = 'SDK.ILogManager',               desc = 'Tests the ILogManager object.' },
 
     -- Managers
-    { cmd = '/sdktest chatmanager',           file = 'SDK.IChatManager',            desc = 'Tests the IChatManager object.' },
-    { cmd = '/sdktest configurationmanager',  file = 'SDK.IConfigurationManager',   desc = 'Tests the IConfigurationManager object.' },
-    { cmd = '/sdktest fontobjects',           file = 'SDK.IFontObjects',            desc = 'Tests the font and primitive objects.' },
-    { cmd = '/sdktest guimanager',            file = 'SDK.IGuiManager',             desc = 'Tests the IGuiManager object.' },
-    { cmd = '/sdktest inputmanager',          file = 'SDK.IInputManager',           desc = 'Tests the IInputManager and related objects.' },
-    { cmd = '/sdktest memorymanager',         file = 'SDK.IMemoryManager',          desc = 'Tests the IMemoryManager and related objects.' },
-    { cmd = '/sdktest offsetmanager',         file = 'SDK.IOffsetManager',          desc = 'Tests the IOffsetManager object.' },
-    { cmd = '/sdktest packetmanager',         file = 'SDK.IPacketManager',          desc = 'Tests the IPacketManager object.' },
-    { cmd = '/sdktest pluginmanager',         file = 'SDK.IPluginManager',          desc = 'Tests the IPluginManager object.' },
-    { cmd = '/sdktest pointermanager',        file = 'SDK.IPointerManager',         desc = 'Tests the IPointerManager object.' },
-    { cmd = '/sdktest polpluginmanager',      file = 'SDK.IPolPluginManager',       desc = 'Tests the IPolPluginManager object.' },
-    { cmd = '/sdktest resourcemanager',       file = 'SDK.IResourceManager',        desc = 'Tests the IResourceManager object.' },
+    { cmd = '/sdktest chatmanager',             file = 'SDK.IChatManager',              desc = 'Tests the IChatManager object.' },
+    { cmd = '/sdktest configurationmanager',    file = 'SDK.IConfigurationManager',     desc = 'Tests the IConfigurationManager object.' },
+    { cmd = '/sdktest fontobjects',             file = 'SDK.IFontObjects',              desc = 'Tests the font and primitive objects.' },
+    { cmd = '/sdktest guimanager',              file = 'SDK.IGuiManager',               desc = 'Tests the IGuiManager object.' },
+    { cmd = '/sdktest inputmanager',            file = 'SDK.IInputManager',             desc = 'Tests the IInputManager and related objects.' },
+    { cmd = '/sdktest offsetmanager',           file = 'SDK.IOffsetManager',            desc = 'Tests the IOffsetManager object.' },
+    { cmd = '/sdktest packetmanager',           file = 'SDK.IPacketManager',            desc = 'Tests the IPacketManager object.' },
+    { cmd = '/sdktest pluginmanager',           file = 'SDK.IPluginManager',            desc = 'Tests the IPluginManager object.' },
+    { cmd = '/sdktest pointermanager',          file = 'SDK.IPointerManager',           desc = 'Tests the IPointerManager object.' },
+    { cmd = '/sdktest polpluginmanager',        file = 'SDK.IPolPluginManager',         desc = 'Tests the IPolPluginManager object.' },
+    { cmd = '/sdktest resourcemanager',         file = 'SDK.IResourceManager',          desc = 'Tests the IResourceManager object.' },
+
+    -- Memory Manager and Objects
+    { cmd = '/sdktest memory autofollow',       file = 'SDK.Memory.IAutoFollow',        desc = 'Tests the IAutoFollow memory object.' },
+    { cmd = '/sdktest memory castbar',          file = 'SDK.Memory.ICastBar',           desc = 'Tests the ICastBar memory object.' },
+    { cmd = '/sdktest memory entity',           file = 'SDK.Memory.IEntity',            desc = 'Tests the IEntity memory object.' },
+    { cmd = '/sdktest memory inventory',        file = 'SDK.Memory.IInventory',         desc = 'Tests the IInventory memory object.' },
+    { cmd = '/sdktest memory party',            file = 'SDK.Memory.IParty',             desc = 'Tests the IParty memory object.' },
+    { cmd = '/sdktest memory player',           file = 'SDK.Memory.IPlayer',            desc = 'Tests the IPlayer memory object.' },
+    { cmd = '/sdktest memory recast',           file = 'SDK.Memory.IRecast',            desc = 'Tests the IRecast memory object.' },
+    { cmd = '/sdktest memory target',           file = 'SDK.Memory.ITarget',            desc = 'Tests the ITarget memory object.' },
 };
 
 --[[
