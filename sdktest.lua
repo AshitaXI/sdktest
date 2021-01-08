@@ -150,7 +150,7 @@ end
 --[[
 * Event called when the addon is being loaded.
 --]]
-ashita.events.register('load', 'sdktest_load', function ()
+ashita.events.register('load', 'sdktest_main_load', function ()
     -- Display the about info..
     print('\30\81[\30\06SDKTest\30\81] \30\71---------------------------------------------------------------------------\30\01');
     print('\30\81[\30\06SDKTest\30\81] \30\106Welcome to the Ashita SDK Lua Binding Test Addon!\30\01');
@@ -172,7 +172,7 @@ end);
 *
 * @param {table} args - The command arguments table.
 --]]
-ashita.events.register('command', 'cb_command', function (args)
+ashita.events.register('command', 'sdktest_main_command', function (args)
     -- Execute a specific test..
     for k, v in pairs(registered_tests) do
         if (v.cmd == string.lower(args.command)) then

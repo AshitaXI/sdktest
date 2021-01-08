@@ -58,7 +58,12 @@ local function key_callback(args)
 
     -- Look for F9 key presses..
     if (args.wparam == 0x78) then
+        -- Block the event..
+        args.blocked = true;
+
+        -- Set the test flag..
         flags.set('sdktest:input_state_2');
+        return;
     end
 end
 
