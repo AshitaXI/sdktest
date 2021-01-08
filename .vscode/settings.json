@@ -6,6 +6,7 @@
         // Global Tables
         "addon",
         "ashita",
+        "bit",
         // Global Objects
         "AshitaCore",
         "LogManager",
