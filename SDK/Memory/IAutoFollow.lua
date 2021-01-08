@@ -240,4 +240,7 @@ return test;
 --[[
 Untested Functions:
 
+    AshitaCore:GetMemoryManager():GetAutoFollow():GetIsCameraLocked()
+    AshitaCore:GetMemoryManager():GetAutoFollow():SetIsCameraLocked()
+
 --]]
