@@ -233,8 +233,3 @@ end
 
 -- Return the test module table..
 return test;
-
---[[
-Untested Functions:
-
---]]
