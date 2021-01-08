@@ -121,8 +121,8 @@ function test.exec()
     assert(p.ServerId == si, 'GetTargetServerId returned an unexpected value.');
 
     -- Test positional auto-following..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IAutoFollow\30\81' \30\106To begin testing auto-following; stand still so your position can be recorded..\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106To begin testing auto-following; stand still so your position can be recorded..\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
 
     -- Set the test state and wait for the user to press F9..
     flags.set('sdktest:autofollow_step1');
@@ -135,8 +135,8 @@ function test.exec()
     local y = p.Movement.LocalPosition.Y;
     local z = p.Movement.LocalPosition.Z;
 
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IAutoFollow\30\81' \30\106Next, run away from your previous position about 10 yalms, in a clear path..\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Next, run away from your previous position about 10 yalms, in a clear path..\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
 
     -- Set the test state and wait for the user to press F9..
     flags.set('sdktest:autofollow_step3');
@@ -183,8 +183,8 @@ function test.exec()
         end
     end
 
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IAutoFollow\30\81' \30\106Next, target and stand next to an NPC.\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Next, target and stand next to an NPC.\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
 
     -- Set the test state and wait for the user to press F9..
     flags.set('sdktest:autofollow_step6');

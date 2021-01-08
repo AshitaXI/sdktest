@@ -72,9 +72,9 @@ function test.exec()
     --]]
 
     -- Unset the players target..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06ITarget\30\81' \30\106Please be sure to not touch any controls while test is running!\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06ITarget\30\81' \30\106Please be outside of a mog house while running this test!\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06ITarget\30\81' \30\106Unsetting any current target..\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.ITarget\30\81' \30\106Please be sure to not touch any controls while test is running!\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.ITarget\30\81' \30\106Please be outside of a mog house while running this test!\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.ITarget\30\81' \30\106Unsetting any current target..\30\01");
 
     -- Unset the target twice in case the player is currently sub-targetting something..
     coroutine.sleep(1);
@@ -112,7 +112,7 @@ function test.exec()
     assert(p ~= nil, 'GetPlayerEntity returned an unexpected value.');
 
     -- Test targeting the local player..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06ITarget\30\81' \30\106Targeting the local player..\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.ITarget\30\81' \30\106Targeting the local player..\30\01");
     target:SetTarget(p.TargetIndex, true);
     coroutine.sleep(1);
 
@@ -141,7 +141,7 @@ function test.exec()
     assert(v == calculate_target_hash(0, p.ServerId, p.TargetIndex), 'GetChecksum returned an unexpected value.');
 
     -- Test targeting the local player as a sub-target..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06ITarget\30\81' \30\106Targeting the local player as a sub-target..\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.ITarget\30\81' \30\106Targeting the local player as a sub-target..\30\01");
     AshitaCore:GetChatManager():QueueCommand(1, '/wave <st>');
     coroutine.sleep(2);
 
@@ -214,7 +214,7 @@ function test.exec()
     assert(win ~= nil, 'GetRawStructureWindow returned an unexpected value.');
 
     -- Test targeting the local player..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06ITarget\30\81' \30\106Targeting the local player..\30\01");
+    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.ITarget\30\81' \30\106Targeting the local player..\30\01");
     target:SetTarget(p.TargetIndex, true);
     coroutine.sleep(2);
 
