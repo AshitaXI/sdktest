@@ -2,33 +2,54 @@
 
 sdktest is an addon designed to help test the Ashita SDK bindings to Lua. 
 
-This is not intended for actual use outside of development testing and demonstrations of API usage within addons.
+_**Please note:** This addon is not intended for general player use. It is not a real addon with any real usage/purpose except for developers. Developers can use this addon as a reference for how to work with the Ashita SDK Lua bindings as well as get some examples of usages._
 
-# Addon Development Environment
+# Commands
 
-sdktest is developed with the following environment configurations:
+sdktest exposes the following commands:
 
-  * Visual Studio Code (Insiders build; latest version.) _(Insiders branch is not required.)_
-  * Lua language support extension.
-    * **Link**: https://marketplace.visualstudio.com/items?itemName=sumneko.lua
+  * **/sdktest ashitacore** - _Tests the IAshitaCore object._
+  * **/sdktest logmanager** - _Tests the ILogManager object._
+  * **/sdktest chatmanager** - _Tests the IChatManager object._
+  * **/sdktest configurationmanager** - _Tests the IConfigurationManager object._
+  * **/sdktest fontobjects** - _Tests the font and primitive objects._
+  * **/sdktest guimanager** - _Tests the IGuiManager object._
+  * **/sdktest inputmanager** - _Tests the IInputManager and related objects._
+  * **/sdktest offsetmanager** - _Tests the IOffsetManager object._
+  * **/sdktest packetmanager** - _Tests the IPacketManager object._
+  * **/sdktest pluginmanager** - _Tests the IPluginManager object._
+  * **/sdktest pointermanager** - _Tests the IPointerManager object._
+  * **/sdktest polpluginmanager** - _Tests the IPolPluginManager object._
+  * **/sdktest resourcemanager** - _Tests the IResourceManager object._
+  * **/sdktest memory autofollow** - _Tests the IAutoFollow memory object._
+  * **/sdktest memory castbar** - _Tests the ICastBar memory object._
+  * **/sdktest memory entity** - _Tests the IEntity memory object._
+  * **/sdktest memory inventory** - _Tests the IInventory memory object._
+  * **/sdktest memory party** - _Tests the IParty memory object._
+  * **/sdktest memory player** - _Tests the IPlayer memory object._
+  * **/sdktest memory recast** - _Tests the IRecast memory object._
+  * **/sdktest memory target** - _Tests the ITarget memory object._
+  * **/sdktest all** - _Runs all registered tests._
 
-To use the Lua extensions to their fullest for addon development; the following should be used to configure them:
+_**Please note:** Some tests may require manual interaction/input by you! Be sure to read the chat output as the tests are running to follow instructions when prompted._
 
-  - Create a local environment settings override for the given addon within the addons parent folder.
-    - Open the addon folder you are developing for. (ie. addons/sdktest/)
-    - Create a new folder named `.vscode` if one does not already exist.
-    - Create a new settings file named `settings.json` if one does not already exist.
+# Environment Recommendations / Configurations
 
-Within the `settings.json` file, we will configure both extensions via the following:
+The recommended environment for working with Ashita v4 addons is using Visual Studio Code.
 
-```json
-{
-    "Lua.diagnostics.globals": [
-        "addon",
-        "ashita"
-    ]
-}
-```
+  * VSCode: [https://code.visualstudio.com/](https://code.visualstudio.com/)
 
-- Extension: `sumneko.lua`
-  - We are defining known globals that the editor is unaware of due to how addons are loaded.
+VSCode does not natively support Lua files in-full. But, it does offer a lot of user-made extensions to make up for what it doesn't have.
+
+We currently recommend the following extension for working with Lua files inside of VSCode:
+
+  * sumneko.lua: [https://marketplace.visualstudio.com/items?itemName=sumneko.lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua)
+
+This extension offers a lot of features in regards to working with addons, and therefore can need some configurations to work with in an ideal manner. This addon includes an example helper-configuration file setup for VSCode to override some of the extensions settings for use with Ashita's Lua setup. `(.vscode/settings.json)`
+
+At this time, the override configuration file helps with:
+
+  * **Lua.diagnostics.disable**: Disables features that will otherwise cause unwanted warnings/errors.
+    * **undefined-field**: Disabled because we expand some built-in types/tables of Lua with custom fields/functions that the extension will warn about being unknown.
+  * **Lua.diagnostics.globals**:
+    * _Types manually exposed by the Addons plugin are added to this list to account for undefined-globals warnings._
