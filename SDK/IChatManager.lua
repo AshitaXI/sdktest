@@ -57,7 +57,8 @@ local function key_callback(args)
     end
 
     -- Look for F9 key presses..
-    if (args.wparam == 0x78) then
+    local isKeyDown = not (bit.band(args.lparam, bit.lshift(0x8000, 0x10)) == bit.lshift(0x8000, 0x10));
+    if (args.wparam == 0x78 and isKeyDown) then
         -- Block the event..
         args.blocked = true;
 
