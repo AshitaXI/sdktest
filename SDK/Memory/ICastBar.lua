@@ -53,7 +53,7 @@ function test.exec()
         - etc.
 
     Because of this, we can't really test for valid data and just force set things.
-    ]]--
+    --]]
 
     -- Test setting the castbar values..
     castbar:SetMax(100);

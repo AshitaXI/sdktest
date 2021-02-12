@@ -40,7 +40,7 @@ function test.exec()
     Entity information is not guaranteed and can be completely different for the same entity for
     various reasons. Because of this we can't do much testing here. We'll do some basic calls,
     just to see if anything fails.
-    ]]--
+    --]]
 
     -- Validate the manager object..
     local memManager = AshitaCore:GetMemoryManager();

@@ -78,7 +78,7 @@ function test.exec()
     -- Validate Direct3D device..
     local device = core:GetDirect3DDevice();
     assert(device ~= nil, 'GetDirect3DDevice returned an unexpected value.');
-    assert(type(device) == 'userdata', 'GetDirect3DDevice returned an unexpected value.');
+    assert(type(device) == 'number', 'GetDirect3DDevice returned an unexpected value.');
 
     -- Validate the properties..
     local props = core:GetProperties();

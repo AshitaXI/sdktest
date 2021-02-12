@@ -143,5 +143,4 @@ Untested Functions:
     Inventory:SetCraftCallback()
     Inventory:SetCraftTimestamp()
         - We do not want to risk a player ban, so we do not tamper with sensitive data like this.
-
-]]--
+--]]
