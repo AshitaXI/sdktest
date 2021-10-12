@@ -99,13 +99,13 @@ function test.exec()
     --]]
 
     -- Test reading booleans..
-    local b1 = configManager:GetBool('sdktest',  'sdktest_bool', 'b1', false);
-    local b2 = configManager:GetBool('sdktest',  'sdktest_bool', 'b2', false);
-    local b3 = configManager:GetBool('sdktest',  'sdktest_bool', 'b3', false);
-    local b4 = configManager:GetBool('sdktest',  'sdktest_bool', 'b4', false);
-    local b5 = configManager:GetBool('sdktest',  'sdktest_bool', 'b5', false);
-    local b6 = configManager:GetBool('sdktest',  'sdktest_bool', 'b6', false);
-    local b7 = configManager:GetBool('sdktest',  'sdktest_bool', 'b7', false);
+    local b1 = configManager:GetBool('sdktest', 'sdktest_bool', 'b1', false);
+    local b2 = configManager:GetBool('sdktest', 'sdktest_bool', 'b2', false);
+    local b3 = configManager:GetBool('sdktest', 'sdktest_bool', 'b3', false);
+    local b4 = configManager:GetBool('sdktest', 'sdktest_bool', 'b4', false);
+    local b5 = configManager:GetBool('sdktest', 'sdktest_bool', 'b5', false);
+    local b6 = configManager:GetBool('sdktest', 'sdktest_bool', 'b6', false);
+    local b7 = configManager:GetBool('sdktest', 'sdktest_bool', 'b7', false);
 
     assert(b1 == false, 'GetBool returned an unexpected value.');
     assert(b2 == true, 'GetBool returned an unexpected value.');
@@ -181,14 +181,13 @@ function test.exec()
     ret = configManager:Load('sdktest', 'sdktest.ini');
     assert(ret == true, 'failed to load test configuration file..');
     str1 = configManager:GetString('sdktest', 'sdktest_str', 'str1');
-    assert(str1 == 'Single.', 'GetString returned an unexpected value.');
+    assert(str1 == 'Changed.', 'GetString returned an unexpected value.');
 
     -- Test changing and saving values then reloading..
     configManager:SetValue('sdktest', 'sdktest_str', 'str1', 'Changed.');
     configManager:Save('sdktest', 'sdktest.ini');
     configManager:Delete('sdktest');
     configManager:Load('sdktest', 'sdktest.ini');
-
     str1 = configManager:GetString('sdktest', 'sdktest_str', 'str1');
     assert(str1 == 'Changed.', 'GetString returned an unexpected value.');
 end
