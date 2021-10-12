@@ -19,6 +19,8 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require('common');
+
 local flags = require('flags');
 
 --[[
@@ -151,15 +153,15 @@ function test.exec()
     local txt = chatManager:GetInputTextRaw();
     assert(txt == '/sdktest 1234', 'GetInputTextRaw returned an unexpected value.');
     local len = chatManager:GetInputTextRawLength();
-    assert(len == 13, 'GetInputTextRawLength returned an unexpected value.');
+    assert(len == 13, ('GetInputTextRawLength returned an unexpected value. (Expected 13, got: %d'):fmt(len));
     local pos = chatManager:GetInputTextRawCaretPosition();
-    assert(pos == 13, 'GetInputTextRawCaretPosition returned an unexpected value.');
+    assert(pos == 13, ('GetInputTextRawCaretPosition returned an unexpected value. (Expected 13, got: %d'):fmt(pos));
     txt = chatManager:GetInputTextParsed();
     assert(txt == '/sdktest 1234', 'GetInputTextParsed returned an unexpected value.');
     len = chatManager:GetInputTextParsedLength();
-    assert(len == 13, 'GetInputTextParsedLength returned an unexpected value.');
+    assert(len == 13, ('GetInputTextParsedLength returned an unexpected value. (Expected 13, got: %d'):fmt(len));
     len = chatManager:GetInputTextParsedLengthMax();
-    assert(len == 120, 'GetInputTextParsedLengthMax returned an unexpected value.');
+    assert(len == 120, ('GetInputTextParsedLengthMax returned an unexpected value. (Expected 120, got: %d'):fmt(len));
     txt = chatManager:GetInputTextDisplay();
     assert(txt == '/sdktest 1234\127\255', 'GetInputTextDisplay returned an unexpected value.'); -- \127\255 is the caret display.
 
@@ -170,15 +172,15 @@ function test.exec()
     txt = chatManager:GetInputTextRaw();
     assert(txt == '/sdktest 54321', 'GetInputTextRaw returned an unexpected value.');
     len = chatManager:GetInputTextRawLength();
-    assert(len == 14, 'GetInputTextRawLength returned an unexpected value.');
+    assert(len == 14, ('GetInputTextRawLength returned an unexpected value. (Expected 14, got: %d'):fmt(len));
     pos = chatManager:GetInputTextRawCaretPosition();
-    assert(pos == 14, 'GetInputTextRawCaretPosition returned an unexpected value.');
+    assert(pos == 14, ('GetInputTextRawCaretPosition returned an unexpected value. (Expected 14, got: %d'):fmt(pos));
     txt = chatManager:GetInputTextParsed();
     assert(txt == '/sdktest 54321', 'GetInputTextParsed returned an unexpected value.');
     len = chatManager:GetInputTextParsedLength();
-    assert(len == 14, 'GetInputTextParsedLength returned an unexpected value.');
+    assert(len == 14, ('GetInputTextParsedLength returned an unexpected value. (Expected 14, got: %d'):fmt(len));
     len = chatManager:GetInputTextParsedLengthMax();
-    assert(len == 120, 'GetInputTextParsedLengthMax returned an unexpected value.');
+    assert(len == 120, ('GetInputTextParsedLengthMax returned an unexpected value. (Expected 120, got: %d'):fmt(len));
     txt = chatManager:GetInputTextDisplay();
     assert(txt == '/sdktest 54321\127\255', 'GetInputTextDisplay returned an unexpected value.'); -- \127\255 is the caret display.
 end
