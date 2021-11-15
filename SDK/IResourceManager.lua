@@ -561,15 +561,15 @@ function test.exec()
     --]]
 
     -- Test requesting spell name strings..
-    s1 = resManager:GetString('spell_names', 1);    -- Default
-    s2 = resManager:GetString('spell_names', 1, 3); -- English
+    s1 = resManager:GetString('spells.names', 1);    -- Default
+    s2 = resManager:GetString('spells.names', 1, 3); -- English
 
     assert(s1 == 'Cure', 'GetString returned an unexpected value.');
     assert(s2 == 'Cure', 'GetString returned an unexpected value.');
 
     -- Test requesting spell name string indices..
-    s1 = resManager:GetString('spell_names', 'Cure');       -- Default
-    s2 = resManager:GetString('spell_names', 'Cure', 3);    -- English
+    s1 = resManager:GetString('spells.names', 'Cure');       -- Default
+    s2 = resManager:GetString('spells.names', 'Cure', 3);    -- English
 
     assert(s1 == 1, 'GetString returned an unexpected value.');
     assert(s2 == 1, 'GetString returned an unexpected value.');
