@@ -640,7 +640,7 @@ function test.exec()
         local i = resManager:GetItemById(id);
         assert(i ~= nil, 'GetItemById returned an unexpected value.');
 
-        p:SetTextureFromMemory(i.Bitmap, i.ImageSize + 0x0E, 0xFF000000);
+        p:SetTextureFromMemory(i.Bitmap, i.ImageSize, 0xFF000000);
         coroutine.sleep(0.2);
     end
 
@@ -655,7 +655,7 @@ function test.exec()
     assert(s1 ~= nil, 'GetStatusIconByIndex returned an unexpected value.');
 
     -- Set the primitive to the weakness status icon..
-    p:SetTextureFromMemory(s1.Bitmap, s1.ImageSize + 0x0E, 0xFF000000);
+    p:SetTextureFromMemory(s1.Bitmap, s1.ImageSize, 0xFF000000);
     coroutine.sleep(0.2);
 
     -- Set the primitive to the Ashita moogle icon that is cached..
