@@ -46,126 +46,109 @@ function test.exec()
     Test the player functions..
     --]]
 
-    local v = nil;
-    v = player:GetMPMax();
-    assert(v ~= nil, 'GetMPMax returned an unexpected value.');
-    v = player:GetMainJob();
-    assert(v ~= nil, 'GetMainJob returned an unexpected value.');
-    v = player:GetMainJobLevel();
-    assert(v ~= nil, 'GetMainJobLevel returned an unexpected value.');
-    v = player:GetSubJob();
-    assert(v ~= nil, 'GetSubJob returned an unexpected value.');
-    v = player:GetSubJobLevel();
-    assert(v ~= nil, 'GetSubJobLevel returned an unexpected value.');
-    v = player:GetExpCurrent();
-    assert(v ~= nil, 'GetExpCurrent returned an unexpected value.');
-    v = player:GetExpNeeded();
-    assert(v ~= nil, 'GetExpNeeded returned an unexpected value.');
-    v = player:GetStat(0);
-    assert(v ~= nil, 'GetStat returned an unexpected value.');
-    v = player:GetStatModifier(0);
-    assert(v ~= nil, 'GetStatModifier returned an unexpected value.');
-    v = player:GetAttack();
-    assert(v ~= nil, 'GetAttack returned an unexpected value.');
-    v = player:GetDefense();
-    assert(v ~= nil, 'GetDefense returned an unexpected value.');
-    v = player:GetResist(0);
-    assert(v ~= nil, 'GetResist returned an unexpected value.');
-    v = player:GetTitle();
-    assert(v ~= nil, 'GetTitle returned an unexpected value.');
-    v = player:GetRank();
-    assert(v ~= nil, 'GetRank returned an unexpected value.');
-    v = player:GetRankPoints();
-    assert(v ~= nil, 'GetRankPoints returned an unexpected value.');
-    v = player:GetNation();
-    assert(v ~= nil, 'GetNation returned an unexpected value.');
-    v = player:GetResidence();
-    assert(v ~= nil, 'GetResidence returned an unexpected value.');
-    v = player:GetSuLevel();
-    assert(v ~= nil, 'GetSuLevel returned an unexpected value.');
-    v = player:GetHomepoint();
-    assert(v ~= nil, 'GetHomepoint returned an unexpected value.');
-    v = player:GetCombatSkill(0);
-    assert(v ~= nil, 'GetCombatSkill returned an unexpected value.');
-    v = player:GetCraftSkill(0);
-    assert(v ~= nil, 'GetCraftSkill returned an unexpected value.');
-    v = player:GetAbilityRecast(0);
-    assert(v ~= nil, 'GetAbilityRecast returned an unexpected value.');
-    v = player:GetAbilityRecastTimerId(0);
-    assert(v ~= nil, 'GetAbilityRecastTimerId returned an unexpected value.');
-    v = player:GetMountRecast();
-    assert(v ~= nil, 'GetMountRecast returned an unexpected value.');
-    v = player:GetMountRecastTimerId();
-    assert(v ~= nil, 'GetMountRecastTimerId returned an unexpected value.');
-    v = player:GetHighestItemLevel();
-    assert(v ~= nil, 'GetHighestItemLevel returned an unexpected value.');
-    v = player:GetItemLevel();
-    assert(v ~= nil, 'GetItemLevel returned an unexpected value.');
-    v = player:GetMainHandItemLevel();
-    assert(v ~= nil, 'GetMainHandItemLevel returned an unexpected value.');
-    v = player:GetUnityFaction();
-    assert(v ~= nil, 'GetUnityFaction returned an unexpected value.');
-    v = player:GetUnityPoints();
-    assert(v ~= nil, 'GetUnityPoints returned an unexpected value.');
-    v = player:GetUnityPartialPersonalEvalutionPoints();
-    assert(v ~= nil, 'GetUnityPartialPersonalEvalutionPoints returned an unexpected value.');
-    v = player:GetUnityPersonalEvaluationPoints();
-    assert(v ~= nil, 'GetUnityPersonalEvaluationPoints returned an unexpected value.');
-    v = player:GetUnityChatColorFlag();
-    assert(v ~= nil, 'GetUnityChatColorFlag returned an unexpected value.');
-    v = player:GetDataLoadedFlags();
-    assert(v ~= nil, 'GetDataLoadedFlags returned an unexpected value.');
-    v = player:GetLimitPoints();
-    assert(v ~= nil, 'GetLimitPoints returned an unexpected value.');
-    v = player:GetMeritPoints();
-    assert(v ~= nil, 'GetMeritPoints returned an unexpected value.');
-    v = player:GetLimitMode();
-    assert(v ~= nil, 'GetLimitMode returned an unexpected value.');
-    v = player:GetMeritPointsMax();
-    assert(v ~= nil, 'GetMeritPointsMax returned an unexpected value.');
-    v = player:GetHomepointMasks();
-    assert(v ~= nil, 'GetHomepointMasks returned an unexpected value.');
-    v = player:GetIsZoning();
-    assert(v ~= nil, 'GetIsZoning returned an unexpected value.');
-    assert(v == 0, 'GetIsZoning returned an unexpected value.');
+    -- Table layout: T{ 'FuncName', OptionalArguments, ExpectedReturnIfNotNil }
+    local funcs = T{
+        -- Get Properties (Player Info)
+        T{ 'GetHPMax',                                  nil,    nil },
+        T{ 'GetMPMax',                                  nil,    nil },
+        T{ 'GetMainJob',                                nil,    nil },
+        T{ 'GetMainJobLevel',                           nil,    nil },
+        T{ 'GetSubJob',                                 nil,    nil },
+        T{ 'GetSubJobLevel',                            nil,    nil },
+        T{ 'GetExpCurrent',                             nil,    nil },
+        T{ 'GetExpNeeded',                              nil,    nil },
+        T{ 'GetStat',                                   T{ 0 }, nil },
+        T{ 'GetStatModifier',                           T{ 0 }, nil },
+        T{ 'GetAttack',                                 nil,    nil },
+        T{ 'GetDefense',                                nil,    nil },
+        T{ 'GetResist',                                 T{ 0 }, nil },
+        T{ 'GetTitle',                                  nil,    nil },
+        T{ 'GetRank',                                   nil,    nil },
+        T{ 'GetRankPoints',                             nil,    nil },
+        T{ 'GetHomepoint',                              nil,    nil },
+        T{ 'GetNation',                                 nil,    nil },
+        T{ 'GetResidence',                              nil,    nil },
+        T{ 'GetSuLevel',                                nil,    nil },
+        T{ 'GetHighestItemLevel',                       nil,    nil },
+        T{ 'GetItemLevel',                              nil,    nil },
+        T{ 'GetMainHandItemLevel',                      nil,    nil },
+        T{ 'GetUnityFaction',                           nil,    nil },
+        T{ 'GetUnityPoints',                            nil,    nil },
+        T{ 'GetUnityPartialPersonalEvalutionPoints',    nil,    nil },
+        T{ 'GetUnityPersonalEvaluationPoints',          nil,    nil },
+        T{ 'GetUnityChatColorFlag',                     nil,    nil },
+        T{ 'GetMasteryJob',                             nil,    nil },
+        T{ 'GetMasteryJobLevel',                        nil,    nil },
+        T{ 'GetMasteryFlags',                           nil,    nil },
+        T{ 'GetMasteryUnknown0000',                     nil,    nil },
+        T{ 'GetMasteryExp',                             nil,    nil },
+        T{ 'GetMasteryExpNeeded',                       nil,    nil },
+        T{ 'GetCombatSkill',                            T{ 0 }, nil },
+        T{ 'GetCraftSkill',                             T{ 0 }, nil },
+        T{ 'GetAbilityRecast',                          T{ 0 }, nil },
+        T{ 'GetAbilityRecastTimerId',                   T{ 0 }, nil },
+        T{ 'GetMountRecast',                            nil,    nil },
+        T{ 'GetMountRecastTimerId',                     nil,    nil },
+        T{ 'GetDataLoadedFlags',                        nil,    nil },
+        T{ 'GetLimitPoints',                            nil,    nil },
+        T{ 'GetMeritPoints',                            nil,    nil },
+        T{ 'GetAssimilationPoints',                     nil,    nil },
+        T{ 'GetIsLimitBreaker',                         nil,    nil },
+        T{ 'GetIsExperiencePointsLocked',               nil,    nil },
+        T{ 'GetIsLimitModeEnabled',                     nil,    nil },
+        T{ 'GetMeritPointsMax',                         nil,    nil },
+        T{ 'GetHomepointMasks',                         nil,    nil },
+        T{ 'GetIsZoning',                               nil,    0 },
 
-    v = player:GetCapacityPoints(0);
-    assert(v ~= nil, 'GetCapacityPoints returned an unexpected value.');
-    v = player:GetJobPoints(0);
-    assert(v ~= nil, 'GetJobPoints returned an unexpected value.');
-    v = player:GetJobPointsSpent(0);
-    assert(v ~= nil, 'GetJobPointsSpent returned an unexpected value.');
+        -- Get Properties (Job Points)
+        T{ 'GetCapacityPoints', T{ 0 }, nil },
+        T{ 'GetJobPoints',      T{ 0 }, nil },
+        T{ 'GetJobPointsSpent', T{ 0 }, nil },
 
-    v = player:GetStatusIcons();
-    assert(v ~= nil, 'GetStatusIcons returned an unexpected value.');
-    v = player:GetStatusTimers();
-    assert(v ~= nil, 'GetStatusTimers returned an unexpected value.');
-    v = player:GetBuffs();
-    assert(v ~= nil, 'GetBuffs returned an unexpected value.');
+        -- Get Properties (Status Icons / Buffs)
+        T{ 'GetStatusIcons',    nil,    nil },
+        T{ 'GetStatusTimers',   nil,    nil },
+        T{ 'GetBuffs',          nil,    nil },
 
-    v = player:GetPetMPPercent();
-    assert(v ~= nil, 'GetPetMPPercent returned an unexpected value.');
-    v = player:GetPetTP();
-    assert(v ~= nil, 'GetPetTP returned an unexpected value.');
+        -- Get Properties (Pet Info)
+        T{ 'GetPetMPPercent',   nil,    nil },
+        T{ 'GetPetTP',          nil,    nil },
 
-    v = player:GetJobLevel(0);
-    assert(v ~= nil, 'GetJobLevel returned an unexpected value.');
-    v = player:GetLoginStatus();
-    assert(v ~= nil, 'GetLoginStatus returned an unexpected value.');
-    assert(v == 2, 'GetLoginStatus returned an unexpected value.');
+        -- Get Properties (Extra Info)
+        T{ 'GetJobLevel',       T{ 1 }, nil },
+        T{ 'GetJobMasterFlags', nil,    nil },
+        T{ 'GetJobMasterLevel', T{ 1 }, nil },
+        T{ 'GetLoginStatus',    nil,    2 },
 
-    v = player:HasAbility(0);
-    assert(v ~= nil, 'HasAbility returned an unexpected value.');
-    v = player:HasPetCommand(0);
-    assert(v ~= nil, 'HasPetCommand returned an unexpected value.');
-    v = player:HasSpell(0);
-    assert(v ~= nil, 'HasSpell returned an unexpected value.');
-    v = player:HasTrait(0);
-    assert(v ~= nil, 'HasTrait returned an unexpected value.');
-    v = player:HasWeaponSkill(0);
-    assert(v ~= nil, 'HasWeaponSkill returned an unexpected value.');
-    v = player:HasKeyItem(0);
-    assert(v ~= nil, 'HasKeyItem returned an unexpected value.');
+        -- Helper Functions
+        T{ 'HasAbilityData',    nil,    nil },
+        T{ 'HasSpellData',      nil,    nil },
+        T{ 'HasAbility',        T{ 5 }, nil },
+        T{ 'HasPetCommand',     T{ 0 }, nil },
+        T{ 'HasSpell',          T{ 0 }, nil },
+        T{ 'HasTrait',          T{ 0 }, nil },
+        T{ 'HasWeaponSkill',    T{ 0 }, nil },
+        T{ 'HasKeyItem',        T{ 0 }, nil },
+    };
+
+    funcs:each(function (n)
+        local f = player[n[1]];
+        assert(f ~= nil, ('Failed to locate expected function: %s'):fmt(n[1]));
+
+        -- Call the function..
+        local v = nil;
+        if (n[2] ~= nil) then
+            v = f(player, n[2]:unpack());
+        else
+            v = f(player);
+        end
+
+        assert(v ~= nil, ('%s returned an unexpected value.'):fmt(n[1]));
+        if (n[3] ~= nil) then
+            assert(v == n[3], ('%s returned an unexpected value. (%s)'):fmt(n[1], tostring(v)));
+        end
+    end);
+
 
     --[[
     Test the raw object..
@@ -190,16 +173,10 @@ function test.exec()
     assert(player:GetTitle() == p.Title, 'Title returned an unexpected value.');
     assert(player:GetRank() == p.Rank, 'Rank returned an unexpected value.');
     assert(player:GetRankPoints() == p.RankPoints, 'RankPoints returned an unexpected value.');
+    assert(player:GetHomepoint() == p.Homepoint, 'Homepoint returned an unexpected value.');
     assert(player:GetNation() == p.Nation, 'Nation returned an unexpected value.');
     assert(player:GetResidence() == p.Residence, 'Residence returned an unexpected value.');
     assert(player:GetSuLevel() == p.SuLevel, 'SuLevel returned an unexpected value.');
-    assert(player:GetHomepoint() == p.Homepoint, 'Homepoint returned an unexpected value.');
-    assert(player:GetCombatSkill(1).Raw == p.CombatSkills.HandToHand.Raw, 'CombatSkills returned an unexpected value.');
-    assert(player:GetCraftSkill(0).Raw == p.CraftSkills.Fishing.Raw, 'CraftSkills returned an unexpected value.');
-    assert(player:GetAbilityRecast(0) == p.AbilityInfo[1].Recast, 'AbilityInfo returned an unexpected value.');
-    assert(player:GetAbilityRecastTimerId(0) == p.AbilityInfo[1].TimerId, 'AbilityInfo returned an unexpected value.');
-    assert(player:GetMountRecast() == p.MountRecast.Recast, 'MountRecast returned an unexpected value.');
-    assert(player:GetMountRecastTimerId() == p.MountRecast.TimerId, 'MountRecast returned an unexpected value.');
     assert(player:GetHighestItemLevel() == p.HighestItemLevel, 'HighestItemLevel returned an unexpected value.');
     assert(player:GetItemLevel() == p.ItemLevel, 'ItemLevel returned an unexpected value.');
     assert(player:GetMainHandItemLevel() == p.MainHandItemLevel, 'MainHandItemLevel returned an unexpected value.');
@@ -208,20 +185,33 @@ function test.exec()
     assert(player:GetUnityPartialPersonalEvalutionPoints() == p.UnityPartialPersonalEvalutionPoints, 'UnityPartialPersonalEvalutionPoints returned an unexpected value.');
     assert(player:GetUnityPersonalEvaluationPoints() == p.UnityPersonalEvaluationPoints, 'UnityPersonalEvaluationPoints returned an unexpected value.');
     assert(player:GetUnityChatColorFlag() == p.UnityChatColorFlag, 'UnityChatColorFlag returned an unexpected value.');
+    assert(player:GetMasteryJob() == p.MasteryJob, 'MasteryJob returned an unexpected value.');
+    assert(player:GetMasteryJobLevel() == p.MasteryJobLevel, 'MasteryJobLeve returned an unexpected value.');
+    assert(player:GetMasteryFlags() == p.MasteryFlags, 'MasteryFlags returned an unexpected value.');
+    assert(player:GetMasteryUnknown0000() == p.MasteryUnknown0000, 'MasteryUnknown0000 returned an unexpected value.');
+    assert(player:GetMasteryExp() == p.MasteryExp, 'MasteryExp returned an unexpected value.');
+    assert(player:GetMasteryExpNeeded() == p.MasteryExpNeeded, 'MasteryExpNeeded returned an unexpected value.');
+    assert(player:GetCombatSkill(1).Raw == p.CombatSkills.HandToHand.Raw, 'CombatSkills returned an unexpected value.');
+    assert(player:GetCraftSkill(0).Raw == p.CraftSkills.Fishing.Raw, 'CraftSkills returned an unexpected value.');
+    assert(player:GetAbilityRecast(0) == p.AbilityInfo[1].Recast, 'AbilityInfo returned an unexpected value.');
+    assert(player:GetAbilityRecastTimerId(0) == p.AbilityInfo[1].TimerId, 'AbilityInfo returned an unexpected value.');
+    assert(player:GetMountRecast() == p.MountRecast.Recast, 'MountRecast returned an unexpected value.');
+    assert(player:GetMountRecastTimerId() == p.MountRecast.TimerId, 'MountRecast returned an unexpected value.');
     assert(player:GetDataLoadedFlags() == p.DataLoadedFlags, 'DataLoadedFlags returned an unexpected value.');
     assert(player:GetLimitPoints() == p.LimitPoints, 'LimitPoints returned an unexpected value.');
     assert(player:GetMeritPoints() == p.MeritPoints, 'MeritPoints returned an unexpected value.');
-    assert(player:GetLimitMode() == p.LimitMode, 'LimitMode returned an unexpected value.');
+    assert(player:GetAssimilationPoints() == p.AssimilationPoints, 'AssimilationPoints returned an unexpected value.');
+    assert(player:GetIsLimitBreaker() == p.IsLimitBreaker, 'IsLimitBreaker returned an unexpected value.');
+    assert(player:GetIsExperiencePointsLocked() == p.IsExperiencePointsLocked, 'IsExperiencePointsLocked returned an unexpected value.');
+    assert(player:GetIsLimitModeEnabled() == p.IsLimitModeEnabled, 'IsLimitModeEnabled returned an unexpected value.');
     assert(player:GetMeritPointsMax() == p.MeritPointsMax, 'MeritPointsMax returned an unexpected value.');
-    assert(player:GetHomepointMasks() == p.HomepointMasks, 'HomepointMasks returned an unexpected value.');
-    assert(player:GetIsZoning() == p.IsZoning, 'IsZoning returned an unexpected value.');
-
     assert(player:GetCapacityPoints(0) == p.JobPoints.Jobs[1].CapacityPoints, 'CapacityPoints returned an unexpected value.');
     assert(player:GetJobPoints(0) == p.JobPoints.Jobs[1].Points, 'Points returned an unexpected value.');
     assert(player:GetJobPointsSpent(0) == p.JobPoints.Jobs[1].PointsSpent, 'PointsSpent returned an unexpected value.');
-
+    assert(player:GetHomepointMasks() == p.HomepointMasks, 'HomepointMasks returned an unexpected value.');
     assert(player:GetStatusIcons()[1] == p.StatusIcons[1], 'StatusIcons returned an unexpected value.');
     assert(player:GetStatusTimers()[1] == p.StatusTimers[1], 'StatusTimers returned an unexpected value.');
+    assert(player:GetIsZoning() == p.IsZoning, 'IsZoning returned an unexpected value.');
     assert(player:GetBuffs()[1] == p.Buffs[1], 'Buffs returned an unexpected value.');
 end
 
