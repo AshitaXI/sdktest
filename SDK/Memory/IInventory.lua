@@ -55,7 +55,7 @@ function test.exec()
 
     local v = i.Containers;
     assert(v ~= nil, 'Containers returned an unexpected value.');
-    assert(#v == 13, 'TreasurePool returned an unexpected value.');
+    assert(#v == 18, 'Containers returned an unexpected value.');
     assert(v[1].Items[1].Id == 65535, 'Containers returned an unexpected value.');
 
     v = i.TreasurePool;
@@ -70,11 +70,11 @@ function test.exec()
 
     v = i.ContainerMaxCapacity;
     assert(v ~= nil, 'ContainerMaxCapacity returned an unexpected value.');
-    assert(#v == 13, 'TreasurePool returned an unexpected value.');
+    assert(#v == 19, 'ContainerMaxCapacity returned an unexpected value.');
 
     v = i.ContainerMaxCapacity2;
     assert(v ~= nil, 'ContainerMaxCapacity2 returned an unexpected value.');
-    assert(#v == 13, 'TreasurePool returned an unexpected value.');
+    assert(#v == 18, 'ContainerMaxCapacity2 returned an unexpected value.');
 
     v = i.Equipment;
     assert(v ~= nil, 'Equipment returned an unexpected value.');
@@ -84,8 +84,10 @@ function test.exec()
     assert(v ~= nil, 'CraftStatus returned an unexpected value.');
     v = i.CraftCallback;
     assert(v ~= nil, 'CraftCallback returned an unexpected value.');
-    v = i.CraftTimestamp;
-    assert(v ~= nil, 'CraftTimestamp returned an unexpected value.');
+    v = i.CraftTimestampAttempt;
+    assert(v ~= nil, 'CraftTimestampAttempt returned an unexpected value.');
+    v = i.CraftTimestampResponse;
+    assert(v ~= nil, 'CraftTimestampResponse returned an unexpected value.');
 
     --[[
     Test functions..
@@ -119,7 +121,8 @@ function test.exec()
     -- Test the craft functions..
     inv:GetCraftStatus();
     inv:GetCraftCallback();
-    inv:GetCraftTimestamp();
+    inv:GetCraftTimestampAttempt();
+    inv:GetCraftTimestampResponse();
 
     -- Test the selected item..
     inv:GetSelectedItemName();
