@@ -46,7 +46,7 @@ function test.exec()
     There is no real / safe way to test these as we cannot guarantee pretty much any of the data.
 
     Players will have varying things that will alter the cast time of anything such as:
-        - Job Traits    
+        - Job Traits
         - Gear
         - Merits
         - Job Points
