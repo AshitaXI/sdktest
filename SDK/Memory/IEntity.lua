@@ -113,9 +113,15 @@ function test.exec()
     assert(entity:GetRenderFlags5(e.TargetIndex) ~= nil, 'GetRenderFlags5 returned an unexpected value.');
     assert(entity:GetRenderFlags6(e.TargetIndex) ~= nil, 'GetRenderFlags6 returned an unexpected value.');
     assert(entity:GetRenderFlags7(e.TargetIndex) ~= nil, 'GetRenderFlags7 returned an unexpected value.');
+    assert(entity:GetRenderFlags8(e.TargetIndex) ~= nil, 'GetRenderFlags8 returned an unexpected value.');
     assert(entity:GetPopEffect(e.TargetIndex) ~= nil, 'GetPopEffect returned an unexpected value.');
     assert(entity:GetInteractionTargetIndex(e.TargetIndex) ~= nil, 'GetInteractionTargetIndex returned an unexpected value.');
     assert(entity:GetNpcSpeechFrame(e.TargetIndex) ~= nil, 'GetNpcSpeechFrame returned an unexpected value.');
+    assert(entity:GetCraftTimerUnknown(e.TargetIndex) ~= nil, 'GetCraftTimerUnknown returned an unexpected value.');
+    assert(entity:GetCraftServerId(e.TargetIndex) ~= nil, 'GetCraftServerId returned an unexpected value.');
+    assert(entity:GetCraftAnimationEffect(e.TargetIndex) ~= nil, 'GetCraftAnimationEffect returned an unexpected value.');
+    assert(entity:GetCraftAnimationStep(e.TargetIndex) ~= nil, 'GetCraftAnimationStep returned an unexpected value.');
+    assert(entity:GetCraftParam(e.TargetIndex) ~= nil, 'GetCraftParam returned an unexpected value.');
     assert(entity:GetMovementSpeed2(e.TargetIndex) ~= nil, 'GetMovementSpeed2 returned an unexpected value.');
     assert(entity:GetNpcWalkPosition1(e.TargetIndex) ~= nil, 'GetNpcWalkPosition1 returned an unexpected value.');
     assert(entity:GetNpcWalkPosition2(e.TargetIndex) ~= nil, 'GetNpcWalkPosition2 returned an unexpected value.');
@@ -126,6 +132,7 @@ function test.exec()
     assert(entity:GetStatus(e.TargetIndex) ~= nil, 'GetStatus returned an unexpected value.');
     assert(entity:GetStatusEvent(e.TargetIndex) ~= nil, 'GetStatusEvent returned an unexpected value.');
     assert(entity:GetClaimStatus(e.TargetIndex) ~= nil, 'GetClaimStatus returned an unexpected value.');
+    assert(entity:GetZoneId(e.TargetIndex) ~= nil, 'GetZoneId returned an unexpected value.');
     assert(entity:GetAnimation(e.TargetIndex, 0) ~= nil, 'GetAnimation returned an unexpected value.');
     assert(entity:GetAnimationTime(e.TargetIndex) ~= nil, 'GetAnimationTime returned an unexpected value.');
     assert(entity:GetAnimationStep(e.TargetIndex) ~= nil, 'GetAnimationStep returned an unexpected value.');
@@ -145,6 +152,8 @@ function test.exec()
     assert(entity:GetFishingUnknown0002(e.TargetIndex) ~= nil, 'GetFishingUnknown0002 returned an unexpected value.');
     assert(entity:GetTargetedIndex(e.TargetIndex) ~= nil, 'GetTargetedIndex returned an unexpected value.');
     assert(entity:GetPetTargetIndex(e.TargetIndex) ~= nil, 'GetPetTargetIndex returned an unexpected value.');
+    assert(entity:GetUpdateRequestDelay(e.TargetIndex) ~= nil, 'GetUpdateRequestDelay returned an unexpected value.');
+    assert(entity:GetIsDirty(e.TargetIndex) ~= nil, 'GetIsDirty returned an unexpected value.');
     assert(entity:GetBallistaFlags(e.TargetIndex) ~= nil, 'GetBallistaFlags returned an unexpected value.');
     assert(entity:GetPankrationEnabled(e.TargetIndex) ~= nil, 'GetPankrationEnabled returned an unexpected value.');
     assert(entity:GetPankrationFlagFlip(e.TargetIndex) ~= nil, 'GetPankrationFlagFlip returned an unexpected value.');
@@ -170,20 +179,20 @@ return test;
 Untested Functions:
 
     AshitaCore:GetMemoryManager():GetEntity():SetLocalPositionX()
-    AshitaCore:GetMemoryManager():GetEntity():SetLocalPositionY()
     AshitaCore:GetMemoryManager():GetEntity():SetLocalPositionZ()
+    AshitaCore:GetMemoryManager():GetEntity():SetLocalPositionY()
     AshitaCore:GetMemoryManager():GetEntity():SetLocalPositionRoll()
     AshitaCore:GetMemoryManager():GetEntity():SetLocalPositionYaw()
     AshitaCore:GetMemoryManager():GetEntity():SetLocalPositionPitch()
     AshitaCore:GetMemoryManager():GetEntity():SetLastPositionX()
-    AshitaCore:GetMemoryManager():GetEntity():SetLastPositionY()
     AshitaCore:GetMemoryManager():GetEntity():SetLastPositionZ()
+    AshitaCore:GetMemoryManager():GetEntity():SetLastPositionY()
     AshitaCore:GetMemoryManager():GetEntity():SetLastPositionRoll()
     AshitaCore:GetMemoryManager():GetEntity():SetLastPositionYaw()
     AshitaCore:GetMemoryManager():GetEntity():SetLastPositionPitch()
     AshitaCore:GetMemoryManager():GetEntity():SetMoveX()
-    AshitaCore:GetMemoryManager():GetEntity():SetMoveY()
     AshitaCore:GetMemoryManager():GetEntity():SetMoveZ()
+    AshitaCore:GetMemoryManager():GetEntity():SetMoveY()
     AshitaCore:GetMemoryManager():GetEntity():SetTargetIndex()
     AshitaCore:GetMemoryManager():GetEntity():SetServerId()
     AshitaCore:GetMemoryManager():GetEntity():SetName()
@@ -195,7 +204,7 @@ Untested Functions:
     AshitaCore:GetMemoryManager():GetEntity():SetDistance()
     AshitaCore:GetMemoryManager():GetEntity():SetHeading()
     AshitaCore:GetMemoryManager():GetEntity():SetHPPercent()
-    AshitaCore:GetMemoryManager():GetEntity():SetEntityType()
+    AshitaCore:GetMemoryManager():GetEntity():SetType()
     AshitaCore:GetMemoryManager():GetEntity():SetRace()
     AshitaCore:GetMemoryManager():GetEntity():SetModelUpdateFlags()
     AshitaCore:GetMemoryManager():GetEntity():SetLookHair()
@@ -217,9 +226,15 @@ Untested Functions:
     AshitaCore:GetMemoryManager():GetEntity():SetRenderFlags5()
     AshitaCore:GetMemoryManager():GetEntity():SetRenderFlags6()
     AshitaCore:GetMemoryManager():GetEntity():SetRenderFlags7()
+    AshitaCore:GetMemoryManager():GetEntity():SetRenderFlags8()
     AshitaCore:GetMemoryManager():GetEntity():SetPopEffect()
     AshitaCore:GetMemoryManager():GetEntity():SetInteractionTargetIndex()
     AshitaCore:GetMemoryManager():GetEntity():SetNpcSpeechFrame()
+    AshitaCore:GetMemoryManager():GetEntity():SetCraftTimerUnknown()
+    AshitaCore:GetMemoryManager():GetEntity():SetCraftServerId()
+    AshitaCore:GetMemoryManager():GetEntity():SetCraftAnimationEffect()
+    AshitaCore:GetMemoryManager():GetEntity():SetCraftAnimationStep()
+    AshitaCore:GetMemoryManager():GetEntity():SetCraftParam()
     AshitaCore:GetMemoryManager():GetEntity():SetMovementSpeed2()
     AshitaCore:GetMemoryManager():GetEntity():SetNpcWalkPosition1()
     AshitaCore:GetMemoryManager():GetEntity():SetNpcWalkPosition2()
@@ -230,6 +245,7 @@ Untested Functions:
     AshitaCore:GetMemoryManager():GetEntity():SetStatus()
     AshitaCore:GetMemoryManager():GetEntity():SetStatusEvent()
     AshitaCore:GetMemoryManager():GetEntity():SetClaimStatus()
+    AshitaCore:GetMemoryManager():GetEntity():SetZoneId()
     AshitaCore:GetMemoryManager():GetEntity():SetAnimation()
     AshitaCore:GetMemoryManager():GetEntity():SetAnimationTime()
     AshitaCore:GetMemoryManager():GetEntity():SetAnimationStep()
@@ -249,6 +265,8 @@ Untested Functions:
     AshitaCore:GetMemoryManager():GetEntity():SetFishingUnknown0002()
     AshitaCore:GetMemoryManager():GetEntity():SetTargetedIndex()
     AshitaCore:GetMemoryManager():GetEntity():SetPetTargetIndex()
+    AshitaCore:GetMemoryManager():GetEntity():SetUpdateRequestDelay()
+    AshitaCore:GetMemoryManager():GetEntity():SetIsDirty()
     AshitaCore:GetMemoryManager():GetEntity():SetBallistaFlags()
     AshitaCore:GetMemoryManager():GetEntity():SetPankrationEnabled()
     AshitaCore:GetMemoryManager():GetEntity():SetPankrationFlagFlip()
@@ -260,5 +278,4 @@ Untested Functions:
     AshitaCore:GetMemoryManager():GetEntity():SetFellowTargetIndex()
     AshitaCore:GetMemoryManager():GetEntity():SetWarpTargetIndex()
         - There is no real decent way to test most of this because every character can have extremely varying data.
-
 --]]
