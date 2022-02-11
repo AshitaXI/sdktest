@@ -136,6 +136,17 @@ function test.exec()
     assert(v ~= nil, 'GetMemberIsActive returned an unexpected value.');
     assert(v == 1, 'GetMemberIsActive returned an unexpected value.');
 
+    -- Test status icons..
+    v = party:GetStatusIconsServerId(0);
+    assert(v ~= nil, 'GetStatusIconsServerId returned an unexpected value.');
+    v = party:GetStatusIconsTargetIndex(0);
+    assert(v ~= nil, 'GetStatusIconsTargetIndex returned an unexpected value.');
+    v = party:GetStatusIconsBitMask(0);
+    assert(v ~= nil, 'GetStatusIconsBitMask returned an unexpected value.');
+    v = party:GetStatusIcons(0);
+    assert(v ~= nil, 'GetStatusIcons returned an unexpected value.');
+    assert(#v == 32, 'GetStatusIcons returned an unexpected value.');
+
     --[[
     Test the raw structure..
     --]]
@@ -145,16 +156,57 @@ function test.exec()
     assert(p ~= nil, 'GetRawStructure returned an unexpected value.');
     assert(#p.Members == 18, 'GetRawStructure returned an unexpected value.');
 
+    -- Testing alliance data..
+    assert(p.Members[1].AllianceInfo ~= nil, 'AllianceInfo returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.AllianceLeaderServerId ~= nil, 'AllianceLeaderServerId returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyLeaderServerId1 ~= nil, 'PartyLeaderServerId1 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyLeaderServerId2 ~= nil, 'PartyLeaderServerId2 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyLeaderServerId3 ~= nil, 'PartyLeaderServerId3 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyVisible1 ~= nil, 'PartyVisible1 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyVisible2 ~= nil, 'PartyVisible2 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyVisible3 ~= nil, 'PartyVisible3 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyMemberCount1 ~= nil, 'PartyMemberCount1 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyMemberCount1 >= 1, 'PartyMemberCount1 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyMemberCount2 ~= nil, 'PartyMemberCount2 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.PartyMemberCount3 ~= nil, 'PartyMemberCount3 returned an unexpected value.');
+    assert(p.Members[1].AllianceInfo.Invited ~= nil, 'Invited returned an unexpected value.');
+
     -- Testing the local players data..
+    assert(p.Members[1].Index ~= nil, 'Index returned an unexpected value.');
+    assert(p.Members[1].MemberNumber ~= nil, 'MemberNumber returned an unexpected value.');
     assert(p.Members[1].Name == e.Name, 'Name returned an unexpected value.');
     assert(p.Members[1].ServerId == e.ServerId, 'ServerId returned an unexpected value.');
     assert(p.Members[1].TargetIndex == e.TargetIndex, 'TargetIndex returned an unexpected value.');
+    assert(p.Members[1].LastUpdatedTimestamp ~= nil, 'LastUpdatedTimestamp returned an unexpected value.');
+    assert(p.Members[1].HP ~= nil, 'HP returned an unexpected value.');
+    assert(p.Members[1].MP ~= nil, 'MP returned an unexpected value.');
+    assert(p.Members[1].TP ~= nil, 'TP returned an unexpected value.');
+    assert(p.Members[1].HPPercent ~= nil, 'HPPercent returned an unexpected value.');
+    assert(p.Members[1].MPPercent ~= nil, 'MPPercent returned an unexpected value.');
+    assert(p.Members[1].Zone ~= nil, 'Zone returned an unexpected value.');
+    assert(p.Members[1].Zone2 ~= nil, 'Zone2 returned an unexpected value.');
+    assert(p.Members[1].FlagMask ~= nil, 'FlagMask returned an unexpected value.');
+    assert(p.Members[1].TreasureLots ~= nil, 'TreasureLots returned an unexpected value.');
+    assert(p.Members[1].MonstrosityItemId ~= nil, 'MonstrosityItemId returned an unexpected value.');
+    assert(p.Members[1].MonstrosityPrefixFlag1 ~= nil, 'MonstrosityPrefixFlag1 returned an unexpected value.');
+    assert(p.Members[1].MonstrosityPrefixFlag2 ~= nil, 'MonstrosityPrefixFlag2 returned an unexpected value.');
+    assert(p.Members[1].MonstrosityName ~= nil, 'MonstrosityName returned an unexpected value.');
+    assert(p.Members[1].MainJob ~= nil, 'MainJob returned an unexpected value.');
+    assert(p.Members[1].MainJobLevel ~= nil, 'MainJobLevel returned an unexpected value.');
+    assert(p.Members[1].SubJob ~= nil, 'SubJob returned an unexpected value.');
+    assert(p.Members[1].SubJobLevel ~= nil, 'SubJobLevel returned an unexpected value.');
+    assert(p.Members[1].ServerId2 ~= nil, 'ServerId2 returned an unexpected value.');
+    assert(p.Members[1].HPPercent2 ~= nil, 'HPPercent2 returned an unexpected value.');
+    assert(p.Members[1].MPPercent2 ~= nil, 'MPPercent2 returned an unexpected value.');
     assert(p.Members[1].IsActive == 1, 'IsActive returned an unexpected value.');
 
     -- Test the raw party status icons..
     local picons = party:GetRawStructureStatusIcons();
     assert(picons ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
     assert(#picons.Members == 5, 'GetRawStructureStatusIcons returned an unexpected value.');
+    assert(picons.Members[1].ServerId ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
+    assert(picons.Members[1].TargetIndex ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
+    assert(picons.Members[1].BitMask ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
     assert(#picons.Members[1].StatusIcons == 32, 'GetRawStructureStatusIcons returned an unexpected value.');
 end
 
@@ -166,13 +218,3 @@ end
 
 -- Return the test module table..
 return test;
-
---[[
-Untested Functions:
-
-    AshitaCore:GetMemoryManager():GetParty():GetStatusIconsServerId()
-    AshitaCore:GetMemoryManager():GetParty():GetStatusIconsTargetIndex()
-    AshitaCore:GetMemoryManager():GetParty():GetStatusIconsBitMask()
-    AshitaCore:GetMemoryManager():GetParty():GetStatusIcons()
-        - We cannot really test these reliably since we cannot ensure the player will be in a party.
---]]
