@@ -223,8 +223,7 @@ function test.exec()
     assert(v ~= nil, 'GetCraftTimestampResponse returned an unexpected value.');
 
     -- Test the selected item..
-    v = inv:GetSelectedItemName();
-    assert(v ~= nil, 'GetSelectedItemName returned an unexpected value.');
+    inv:GetSelectedItemName(); -- Ensure the call works and doesn't fail/error..
     v = inv:GetSelectedItemId();
     assert(v ~= nil, 'GetSelectedItemId returned an unexpected value.');
     v = inv:GetSelectedItemIndex();

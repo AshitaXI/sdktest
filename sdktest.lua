@@ -25,6 +25,8 @@ addon.version   = '1.0';
 addon.desc      = 'Tests the various bindings of the Ashita SDK.';
 addon.link      = 'https://ashitaxi.com/';
 
+require('common');
+
 --[[
 * Table of known tests that are registered to be available.
 --]]
