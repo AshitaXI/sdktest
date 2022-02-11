@@ -90,6 +90,8 @@ function test.exec()
     v = party:GetMemberTargetIndex(0);
     assert(v ~= nil, 'GetMemberTargetIndex returned an unexpected value.');
     assert(v == e.TargetIndex, 'GetMemberTargetIndex returned an unexpected value.');
+    v = party:GetMemberLastUpdatedTimestamp(0);
+    assert(v ~= nil, 'GetMemoryLastUpdatedTimestamp returned an unexpected value.');
     v = party:GetMemberHP(0);
     assert(v ~= nil, 'GetMemberHP returned an unexpected value.');
     v = party:GetMemberMP(0);
@@ -102,8 +104,20 @@ function test.exec()
     assert(v ~= nil, 'GetMemberMPPercent returned an unexpected value.');
     v = party:GetMemberZone(0);
     assert(v ~= nil, 'GetMemberZone returned an unexpected value.');
+    v = party:GetMemberZone2(0);
+    assert(v ~= nil, 'GetMemberZone2 returned an unexpected value.');
     v = party:GetMemberFlagMask(0);
     assert(v ~= nil, 'GetMemberFlagMask returned an unexpected value.');
+    v = party:GetMemberTreasureLot(0, 0);
+    assert(v ~= nil, 'GetMemberTreasureLot returned an unexpected value.');
+    v = party:GetMemberMonstrosityItemId(0);
+    assert(v ~= nil, 'GetMemberMonstrosityItemId returned an unexpected value.');
+    v = party:GetMemberMonstrosityPrefixFlag1(0);
+    assert(v ~= nil, 'GetMemberMonstrosityPrefixFlag1 returned an unexpected value.');
+    v = party:GetMemberMonstrosityPrefixFlag2(0);
+    assert(v ~= nil, 'GetMemberMonstrosityPrefixFlag2 returned an unexpected value.');
+    v = party:GetMemberMonstrosityName(0);
+    assert(v ~= nil, 'GetMemberMonstrosityName returned an unexpected value.');
     v = party:GetMemberMainJob(0);
     assert(v ~= nil, 'GetMemberMainJob returned an unexpected value.');
     v = party:GetMemberMainJobLevel(0);
@@ -160,7 +174,5 @@ Untested Functions:
     AshitaCore:GetMemoryManager():GetParty():GetStatusIconsTargetIndex()
     AshitaCore:GetMemoryManager():GetParty():GetStatusIconsBitMask()
     AshitaCore:GetMemoryManager():GetParty():GetStatusIcons()
-
-        We cannot really test these reliably since we cannot ensure the player will be in a party.
-
+        - We cannot really test these reliably since we cannot ensure the player will be in a party.
 --]]
