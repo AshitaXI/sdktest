@@ -47,17 +47,14 @@ You can also test if a flag is set via:
 Once all testing has completed, you can validate all your flags have been met/set via:
 
     flags.validate();
+
+Note: Flag names are compared in a non-case sensitive manner!
 --]]
 
---[[
-* The main flags module table.
---]]
-local flags = { };
+require 'common';
 
---[[
-* Table of registered flags that are part of the testing.
---]]
-flags.flags = { };
+local flags = T{};
+flags.flags = T{};
 
 --[[
 * Registers a table of flags to be monitored.
@@ -65,6 +62,8 @@ flags.flags = { };
 * @param {table} tests - The table of tests to monitor.
 --]]
 function flags.register(tests)
+    assert(type(tests) == 'table', 'invalid tests table');
+
     flags.flags = tests;
 end
 
@@ -75,12 +74,11 @@ end
 * @return {bool} True if set, false otherwise.
 --]]
 function flags.is_set(name)
-    for _, v in pairs(flags.flags) do
-        if (v.name == string.lower(name)) then
-            return v.seen;
-        end
+    local flag = flags.flags:filter(function (v) return v.name:ieq(name); end);
+    if (#flag == 0) then
+        error(('is_set requested an unregistered flag: %s'):fmt(name));
     end
-    error(string.format('is_set requested an unregistered flag: %s', tostring(name)));
+    return flag:first().seen;
 end
 
 --[[
@@ -89,28 +87,30 @@ end
 * @param {string} name - The name of the flag to set.
 --]]
 function flags.set(name)
-    for _, v in pairs(flags.flags) do
-        if (v.name == string.lower(name)) then
-            v.seen = true;
-            return;
-        end
+    if (not flags.flags:any(function (v) return v.name:ieq(name); end)) then
+        error(('set requested an unregistered flag: %s'):fmt(name));
     end
-    error(string.format('set requested an unregistered flag: %s', tostring(name)));
+
+    flags.flags:each(function (v)
+        if (v.name:ieq(name)) then
+            v.seen = true;
+        end
+    end);
 end
 
 --[[
 * Asserts that all flags have met their true condition.
 --]]
 function flags.validate()
-    local failed = { };
+    local failed = T{};
 
-    for _, v in pairs(flags.flags) do
+    flags.flags:each(function (v)
         if (not v.seen) then
-            table.insert(failed, v.name);
+            failed:append(v.name);
         end
-    end
+    end);
 
-    assert(#failed == 0, string.format('failed to validate all flag conditions were met: %s', table.concat(failed, ', ')));
+    assert(#failed == 0, ('failed to validate all flag conditions were met: %s'):fmt(failed:join(', ')));
 end
 
 -- Return the flags module table..
