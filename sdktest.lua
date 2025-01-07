@@ -21,42 +21,42 @@
 
 addon.name      = 'sdktest';
 addon.author    = 'atom0s';
-addon.version   = '1.0';
+addon.version   = '1.1';
 addon.desc      = 'Tests the various bindings of the Ashita SDK.';
 addon.link      = 'https://ashitaxi.com/';
 
-require('common');
+require 'common';
 
 --[[
 * Table of known tests that are registered to be available.
 --]]
-local registered_tests = {
+local registered_tests = T{
     -- Main Objects
-    { cmd = '/sdktest ashitacore',              file = 'SDK.IAshitaCore',               desc = 'Tests the IAshitaCore object.' },
-    { cmd = '/sdktest logmanager',              file = 'SDK.ILogManager',               desc = 'Tests the ILogManager object.' },
+    T{ cmd = '/sdktest ashitacore',             file = 'SDK.IAshitaCore',               desc = 'Tests the IAshitaCore object.' },
+    T{ cmd = '/sdktest logmanager',             file = 'SDK.ILogManager',               desc = 'Tests the ILogManager object.' },
 
     -- Managers
-    { cmd = '/sdktest chatmanager',             file = 'SDK.IChatManager',              desc = 'Tests the IChatManager object.' },
-    { cmd = '/sdktest configurationmanager',    file = 'SDK.IConfigurationManager',     desc = 'Tests the IConfigurationManager object.' },
-    { cmd = '/sdktest fontobjects',             file = 'SDK.IFontObjects',              desc = 'Tests the font and primitive objects.' },
-    { cmd = '/sdktest guimanager',              file = 'SDK.IGuiManager',               desc = 'Tests the IGuiManager object.' },
-    { cmd = '/sdktest inputmanager',            file = 'SDK.IInputManager',             desc = 'Tests the IInputManager and related objects.' },
-    { cmd = '/sdktest offsetmanager',           file = 'SDK.IOffsetManager',            desc = 'Tests the IOffsetManager object.' },
-    { cmd = '/sdktest packetmanager',           file = 'SDK.IPacketManager',            desc = 'Tests the IPacketManager object.' },
-    { cmd = '/sdktest pluginmanager',           file = 'SDK.IPluginManager',            desc = 'Tests the IPluginManager object.' },
-    { cmd = '/sdktest pointermanager',          file = 'SDK.IPointerManager',           desc = 'Tests the IPointerManager object.' },
-    { cmd = '/sdktest polpluginmanager',        file = 'SDK.IPolPluginManager',         desc = 'Tests the IPolPluginManager object.' },
-    { cmd = '/sdktest resourcemanager',         file = 'SDK.IResourceManager',          desc = 'Tests the IResourceManager object.' },
+    T{ cmd = '/sdktest chatmanager',            file = 'SDK.IChatManager',              desc = 'Tests the IChatManager object.' },
+    T{ cmd = '/sdktest configurationmanager',   file = 'SDK.IConfigurationManager',     desc = 'Tests the IConfigurationManager object.' },
+    T{ cmd = '/sdktest fontobjects',            file = 'SDK.IFontObjects',              desc = 'Tests the font and primitive objects.' },
+    T{ cmd = '/sdktest guimanager',             file = 'SDK.IGuiManager',               desc = 'Tests the IGuiManager object.' },
+    T{ cmd = '/sdktest inputmanager',           file = 'SDK.IInputManager',             desc = 'Tests the IInputManager and related objects.' },
+    T{ cmd = '/sdktest offsetmanager',          file = 'SDK.IOffsetManager',            desc = 'Tests the IOffsetManager object.' },
+    T{ cmd = '/sdktest packetmanager',          file = 'SDK.IPacketManager',            desc = 'Tests the IPacketManager object.' },
+    T{ cmd = '/sdktest pluginmanager',          file = 'SDK.IPluginManager',            desc = 'Tests the IPluginManager object.' },
+    T{ cmd = '/sdktest pointermanager',         file = 'SDK.IPointerManager',           desc = 'Tests the IPointerManager object.' },
+    T{ cmd = '/sdktest polpluginmanager',       file = 'SDK.IPolPluginManager',         desc = 'Tests the IPolPluginManager object.' },
+    T{ cmd = '/sdktest resourcemanager',        file = 'SDK.IResourceManager',          desc = 'Tests the IResourceManager object.' },
 
     -- Memory Manager and Objects
-    { cmd = '/sdktest memory autofollow',       file = 'SDK.Memory.IAutoFollow',        desc = 'Tests the IAutoFollow memory object.' },
-    { cmd = '/sdktest memory castbar',          file = 'SDK.Memory.ICastBar',           desc = 'Tests the ICastBar memory object.' },
-    { cmd = '/sdktest memory entity',           file = 'SDK.Memory.IEntity',            desc = 'Tests the IEntity memory object.' },
-    { cmd = '/sdktest memory inventory',        file = 'SDK.Memory.IInventory',         desc = 'Tests the IInventory memory object.' },
-    { cmd = '/sdktest memory party',            file = 'SDK.Memory.IParty',             desc = 'Tests the IParty memory object.' },
-    { cmd = '/sdktest memory player',           file = 'SDK.Memory.IPlayer',            desc = 'Tests the IPlayer memory object.' },
-    { cmd = '/sdktest memory recast',           file = 'SDK.Memory.IRecast',            desc = 'Tests the IRecast memory object.' },
-    { cmd = '/sdktest memory target',           file = 'SDK.Memory.ITarget',            desc = 'Tests the ITarget memory object.' },
+    T{ cmd = '/sdktest memory autofollow',      file = 'SDK.Memory.IAutoFollow',        desc = 'Tests the IAutoFollow memory object.' },
+    T{ cmd = '/sdktest memory castbar',         file = 'SDK.Memory.ICastBar',           desc = 'Tests the ICastBar memory object.' },
+    T{ cmd = '/sdktest memory entity',          file = 'SDK.Memory.IEntity',            desc = 'Tests the IEntity memory object.' },
+    T{ cmd = '/sdktest memory inventory',       file = 'SDK.Memory.IInventory',         desc = 'Tests the IInventory memory object.' },
+    T{ cmd = '/sdktest memory party',           file = 'SDK.Memory.IParty',             desc = 'Tests the IParty memory object.' },
+    T{ cmd = '/sdktest memory player',          file = 'SDK.Memory.IPlayer',            desc = 'Tests the IPlayer memory object.' },
+    T{ cmd = '/sdktest memory recast',          file = 'SDK.Memory.IRecast',            desc = 'Tests the IRecast memory object.' },
+    T{ cmd = '/sdktest memory target',          file = 'SDK.Memory.ITarget',            desc = 'Tests the ITarget memory object.' },
 };
 
 --[[
@@ -103,9 +103,14 @@ local function run_test(test, cnt)
         assert(m.cleanup ~= nil, 'test is missing expected \'cleanup\' function.');
     end);
 
+    if (m == nil) then
+        print('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76Test file failed to load properly.\30\01');
+        return false;
+    end
+
     -- Execute the test..
     if (res) then
-        local errors = { };
+        local errors = T{};
 
         -- Initialize the test..
         res, err = pcall(function ()
@@ -141,20 +146,18 @@ local function run_test(test, cnt)
 
         -- Display the test results..
         res = fif(#errors == 0, '\30\02Ok!', '\30\76Error!');
-        print(string.format('\30\81[\30\06SDKTest\30\81] \30\106Tests for \30\81\'\30\06%s\30\81\' \30\106completed: %s\30\01', string.sub(test.file, 5, -1), res));
+        print(('\30\81[\30\06SDKTest\30\81] \30\106Tests for \30\81\'\30\06%s\30\81\' \30\106completed: %s\30\01'):fmt(test.file:sub(5, -1), res));
 
         -- Display errors if any are present..
-        if (#errors > 0) then
-            for k, v in pairs(errors) do
-                print(string.format('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01', v));
-            end
-        end
+        errors:each(function (v)
+            print(('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01'):fmt(v));
+        end);
 
         return #errors == 0;
     end
 
     -- Failed to require and validate the test file..
-    print(string.format('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01', err));
+    print(('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01'):fmt(err));
     return false;
 end
 
@@ -172,10 +175,10 @@ ashita.events.register('load', 'sdktest_main_load', function ()
 
     -- Display the command usage..
     print('\30\81[\30\06SDKTest\30\81] \30\106The following commands are valid to execute a test:\30\01');
-    for k, v in pairs(registered_tests) do
-        print(string.format('\30\81[\30\06SDKTest\30\81] \30\106Command: \30\02%s\30\106 - \30\03%s\03\01', v.cmd, v.desc));
-    end
-    print(string.format('\30\81[\30\06SDKTest\30\81] \30\106Command: \30\02%s\30\106 - \30\03%s\03\01', '/sdktest all', 'Runs all tests.'));
+    registered_tests:each(function (v)
+        print(('\30\81[\30\06SDKTest\30\81] \30\106Command: \30\02%s\30\106 - \30\03%s\03\01'):fmt(v.cmd, v.desc));
+    end);
+    print(('\30\81[\30\06SDKTest\30\81] \30\106Command: \30\02%s\30\106 - \30\03%s\03\01'):fmt('/sdktest all', 'Runs all tests.'));
 end);
 
 --[[
@@ -185,8 +188,8 @@ end);
 --]]
 ashita.events.register('command', 'sdktest_main_command', function (args)
     -- Execute a specific test..
-    for k, v in pairs(registered_tests) do
-        if (v.cmd == string.lower(args.command)) then
+    for _, v in pairs(registered_tests) do
+        if (v.cmd:ieq(args.command)) then
             -- Mark the command as handled..
             args.blocked = true;
 
@@ -200,11 +203,11 @@ ashita.events.register('command', 'sdktest_main_command', function (args)
     end
 
     -- Execute all tests..
-    if (args.command == '/sdktest all') then
+    if (args.command:ieq('/sdktest all')) then
         -- Mark the command as handled..
         args.blocked = true;
 
-        for k, v in pairs(registered_tests) do
+        for _, v in pairs(registered_tests) do
             -- Step the test counter..
             test_counter = test_counter + 1;
 
