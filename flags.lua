@@ -68,13 +68,23 @@ function flags.register(tests)
 end
 
 --[[
+* Returns if the given flag exists in the current flags table.
+*
+* @param {string} name - The name of the flag to check.
+* @return {bool} True if exists, false otherwise.
+--]]
+function flags.has(name)
+    return flags.flags:any(function (v) return v.name:ieq(name); end);
+end
+
+--[[
 * Returns if the given flag is set or not.
 *
 * @param {string} name - The name of the flag to check.
 * @return {bool} True if set, false otherwise.
 --]]
 function flags.is_set(name)
-    local flag = flags.flags:filter(function (v) return v.name:ieq(name); end);
+    local flag = flags.flags:filteri(function (v) return v.name:ieq(name); end);
     if (#flag == 0) then
         error(('is_set requested an unregistered flag: %s'):fmt(name));
     end
