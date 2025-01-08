@@ -19,15 +19,29 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Cleanup test pointers..
+    local pointerManager = AshitaCore:GetPointerManager();
+    if (pointerManager ~= nil) then
+        pointerManager:Delete('sdktest_pointer_1');
+        pointerManager:Delete('sdktest_pointer_2');
+    end
 end
 
 --[[
@@ -60,18 +74,6 @@ function test.exec()
     assert(v == 0, 'Get returned an unexpected value.');
     v = pointerManager:Get('sdktest_pointer_2');
     assert(v == 0, 'Get returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Cleanup test pointers..
-    local pointerManager = AshitaCore:GetPointerManager();
-    if (pointerManager ~= nil) then
-        pointerManager:Delete('sdktest_pointer_1');
-        pointerManager:Delete('sdktest_pointer_2');
-    end
 end
 
 -- Return the test module table..

@@ -19,15 +19,28 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Cleanup test offsets..
+    local offsetManager = AshitaCore:GetOffsetManager();
+    if (offsetManager ~= nil) then
+        offsetManager:Delete('sdktest');
+    end
 end
 
 --[[
@@ -62,17 +75,6 @@ function test.exec()
     assert(v == 0, 'Get returned an unexpected value.');
     v = offsetManager:Get('sdktest', 'offset2');
     assert(v == 0, 'Get returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Cleanup test offsets..
-    local offsetManager = AshitaCore:GetOffsetManager();
-    if (offsetManager ~= nil) then
-        offsetManager:Delete('sdktest');
-    end
 end
 
 -- Return the test module table..

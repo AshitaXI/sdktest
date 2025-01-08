@@ -19,10 +19,12 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
@@ -74,6 +76,20 @@ str4 = "Quoted words ' with ' other symbols."]];
     assert(f ~= nil, 'failed to create test configuration file.');
     f:write(config);
     f:close();
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Cleanup the test configuration..
+    local configManager = AshitaCore:GetConfigurationManager();
+    if (configManager ~= nil) then
+        configManager:Delete('sdktest');
+    end
+
+    -- Delete the test configuration file..
+    ashita.fs.remove(string.format('%s/config/sdktest.ini', AshitaCore:GetInstallPath()));
 end
 
 --[[
@@ -190,20 +206,6 @@ function test.exec()
     configManager:Load('sdktest', 'sdktest.ini');
     str1 = configManager:GetString('sdktest', 'sdktest_str', 'str1');
     assert(str1 == 'Changed.', 'GetString returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Cleanup the test configuration..
-    local configManager = AshitaCore:GetConfigurationManager();
-    if (configManager ~= nil) then
-        configManager:Delete('sdktest');
-    end
-
-    -- Delete the test configuration file..
-    ashita.fs.remove(string.format('%s/config/sdktest.ini', AshitaCore:GetInstallPath()));
 end
 
 -- Return the test module table..

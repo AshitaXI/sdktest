@@ -19,15 +19,23 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
 end
 
 --[[
@@ -213,12 +221,6 @@ function test.exec()
     assert(player:GetStatusTimers()[1] == p.StatusTimers[1], 'StatusTimers returned an unexpected value.');
     assert(player:GetIsZoning() == p.IsZoning, 'IsZoning returned an unexpected value.');
     assert(player:GetBuffs()[1] == p.Buffs[1], 'Buffs returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
 end
 
 -- Return the test module table..

@@ -19,15 +19,28 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Cleanup the test primitive..
+    local primManager = AshitaCore:GetPrimitiveManager();
+    if (primManager ~= nil) then
+        primManager:Delete('sdktest_resourceprim');
+    end
 end
 
 --[[
@@ -664,17 +677,6 @@ function test.exec()
 
     -- Cleanup the test primitive..
     primManager:Delete('sdktest_resourceprim');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Cleanup the test primitive..
-    local primManager = AshitaCore:GetPrimitiveManager();
-    if (primManager ~= nil) then
-        primManager:Delete('sdktest_resourceprim');
-    end
 end
 
 -- Return the test module table..

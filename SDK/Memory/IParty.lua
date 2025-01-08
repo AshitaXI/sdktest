@@ -19,15 +19,23 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
 end
 
 --[[
@@ -208,12 +216,6 @@ function test.exec()
     assert(picons.Members[1].TargetIndex ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
     assert(picons.Members[1].BitMask ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
     assert(#picons.Members[1].StatusIcons == 32, 'GetRawStructureStatusIcons returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
 end
 
 -- Return the test module table..

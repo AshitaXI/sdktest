@@ -19,15 +19,31 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Cleanup the test keybind..
+    local inputManager = AshitaCore:GetInputManager();
+    if (inputManager ~= nil) then
+        local k = inputManager:GetKeyboard();
+        if (k ~= nil) then
+            k:Unbind(0x58, true, true, false, true, false, false);
+        end
+    end
 end
 
 --[[
@@ -127,20 +143,6 @@ function test.exec()
     m:SetBlockInput(prev);
 
     assert(prev ~= curr, 'GetBlockInput returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Cleanup the test keybind..
-    local inputManager = AshitaCore:GetInputManager();
-    if (inputManager ~= nil) then
-        local k = inputManager:GetKeyboard();
-        if (k ~= nil) then
-            k:Unbind(0x58, true, true, false, true, false, false);
-        end
-    end
 end
 
 -- Return the test module table..

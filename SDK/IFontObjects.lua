@@ -19,10 +19,12 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Test properties.
@@ -60,6 +62,23 @@ function test.init(cnt)
 
     -- Create a unique suffix for the objects to be used with these tests..
     test.uniqueSuffix = string.format('_%d_%d_%d', addon.instance.current_frame, rnd, cnt);
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Validate the manager objects..
+    local fontManager = AshitaCore:GetFontManager();
+    local primManager = AshitaCore:GetPrimitiveManager();
+    assert(fontManager ~= nil, 'GetFontManager returned an unexpected value.');
+    assert(primManager ~= nil, 'GetPrimitiveManager returned an unexpected value.');
+
+    -- Cleanup the objects used by the tests..
+    cleanup_object(fontManager, string.format('sdktest1%s', test.uniqueSuffix));
+    cleanup_object(fontManager, string.format('sdktest2%s', test.uniqueSuffix));
+    cleanup_object(primManager, string.format('sdktest1%s', test.uniqueSuffix));
+    cleanup_object(primManager, string.format('sdktest2%s', test.uniqueSuffix));
 end
 
 --[[
@@ -489,23 +508,6 @@ function test.exec()
     primManager:SetVisible(prev);
 
     assert(curr == false, 'GetVisible returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Validate the manager objects..
-    local fontManager = AshitaCore:GetFontManager();
-    local primManager = AshitaCore:GetPrimitiveManager();
-    assert(fontManager ~= nil, 'GetFontManager returned an unexpected value.');
-    assert(primManager ~= nil, 'GetPrimitiveManager returned an unexpected value.');
-
-    -- Cleanup the objects used by the tests..
-    cleanup_object(fontManager, string.format('sdktest1%s', test.uniqueSuffix));
-    cleanup_object(fontManager, string.format('sdktest2%s', test.uniqueSuffix));
-    cleanup_object(primManager, string.format('sdktest1%s', test.uniqueSuffix));
-    cleanup_object(primManager, string.format('sdktest2%s', test.uniqueSuffix));
 end
 
 -- Return the test module table..

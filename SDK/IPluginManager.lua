@@ -19,12 +19,14 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
-local flags = require('flags');
+require 'common';
+
+local flags = require 'flags';
 
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Event called when the addon is processing plugin events.
@@ -42,13 +44,26 @@ end
 --]]
 function test.init()
     -- Register the test flags..
-    local test_flags = {
-        { name = 'sdktest:plugin_event', seen = false },
+    local test_flags = T{
+        T{ name = 'sdktest:plugin_event', seen = false },
     };
     flags.register(test_flags);
 
     -- Register event callbacks..
     ashita.events.register('plugin_event', 'plugin_event_callback', plugin_event_callback);
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Unregister event callbacks..
+    ashita.events.unregister('plugin_event', 'plugin_event_callback');
+
+    print(flags.is_set('sdktest:plugin_event'));
+
+    -- Ensure all flags were seen..
+    flags.validate();
 end
 
 --[[
@@ -103,17 +118,6 @@ function test.exec()
     -- Give tests time to complete and be processed by the client..
     print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IPluginManager\30\81' \30\106waiting 2 seconds to allow events to send..\30\01");
     coroutine.sleep(2);
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Unregister event callbacks..
-    ashita.events.unregister('plugin_event', 'plugin_event_callback');
-
-    -- Ensure all flags were seen..
-    flags.validate();
 end
 
 -- Return the test module table..

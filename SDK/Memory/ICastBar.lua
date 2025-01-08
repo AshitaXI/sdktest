@@ -19,15 +19,23 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
 end
 
 --[[
@@ -70,12 +78,6 @@ function test.exec()
     assert(v == 25, 'GetPercent returned an unexpected value.');
     v = castbar:GetCastType();
     assert(v == 2, 'GetCastType returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
 end
 
 -- Return the test module table..

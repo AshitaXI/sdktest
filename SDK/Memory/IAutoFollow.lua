@@ -19,12 +19,14 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
-local flags = require('flags');
+require 'common';
+
+local flags = require 'flags';
 
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Event called when the addon is processing keyboard input. (WNDPROC)
@@ -70,19 +72,30 @@ end
 --]]
 function test.init()
     -- Register the test flags..
-    local test_flags = {
-        { name = 'sdktest:autofollow_step1', seen = false },
-        { name = 'sdktest:autofollow_step2', seen = false },
-        { name = 'sdktest:autofollow_step3', seen = false },
-        { name = 'sdktest:autofollow_step4', seen = false },
-        { name = 'sdktest:autofollow_step5', seen = false },
-        { name = 'sdktest:autofollow_step6', seen = false },
-        { name = 'sdktest:autofollow_step7', seen = false },
+    local test_flags = T{
+        T{ name = 'sdktest:autofollow_step1', seen = false },
+        T{ name = 'sdktest:autofollow_step2', seen = false },
+        T{ name = 'sdktest:autofollow_step3', seen = false },
+        T{ name = 'sdktest:autofollow_step4', seen = false },
+        T{ name = 'sdktest:autofollow_step5', seen = false },
+        T{ name = 'sdktest:autofollow_step6', seen = false },
+        T{ name = 'sdktest:autofollow_step7', seen = false },
     };
     flags.register(test_flags);
 
     -- Register event callbacks..
     ashita.events.register('key', 'key_callback', key_callback);
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+    -- Unregister event callbacks..
+    ashita.events.unregister('key', 'key_callback');
+
+    -- Ensure all flags were seen..
+    flags.validate();
 end
 
 --[[
@@ -222,17 +235,6 @@ function test.exec()
     si = follow:GetFollowTargetServerId();
     assert(ti == t.TargetIndex, 'GetFollowTargetIndex returned an unexpected value.');
     assert(si == t.ServerId, 'GetFollowTargetServerId returned an unexpected value.');
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-    -- Unregister event callbacks..
-    ashita.events.unregister('key', 'key_callback');
-
-    -- Ensure all flags were seen..
-    flags.validate();
 end
 
 -- Return the test module table..

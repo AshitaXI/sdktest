@@ -19,15 +19,23 @@
  * along with Ashita.  If not, see <https://www.gnu.org/licenses/>.
 --]]
 
+require 'common';
+
 --[[
 * The main test module table.
 --]]
-local test = { };
+local test = T{};
 
 --[[
 * Initializes the test, preparing it for usage.
 --]]
 function test.init()
+end
+
+--[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
 end
 
 --[[
@@ -37,12 +45,6 @@ function test.exec()
     --[[
     TODO: The GuiManager bindings are currently not ready. To be finished later.
     --]]
-end
-
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
 end
 
 -- Return the test module table..
