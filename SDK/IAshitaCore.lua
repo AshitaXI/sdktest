@@ -41,6 +41,12 @@ function test.init()
 end
 
 --[[
+* Invoked after the test has completed; allowing it to cleanup any generated resources.
+--]]
+function test.cleanup()
+end
+
+--[[
 * Executes the test.
 --]]
 function test.exec()
@@ -152,12 +158,6 @@ function test.exec()
     assert(ptr > 0, 'GetPointer returned an unexpected value.');
 end
 
---[[
-* Invoked after the test has completed; allowing it to cleanup any generated resources.
---]]
-function test.cleanup()
-end
-
 -- Return the test module table..
 return test;
 
@@ -183,33 +183,33 @@ Untested Functions:
 
 Additionally, there are also hooked API forwards that are part of the AshitaCore object. These are not tested but include:
 
-    Direct3DCreate8
-    DirectInput8Create
+    AshitaCore:Direct3DCreate8(...)
+    AshitaCore:DirectInput8Create(...)
 
-    CreateMutexA
-    CreateMutexW
-    OpenMutexA
-    OpenMutexW
+    AshitaCore:CreateMutexA(...)
+    AshitaCore:CreateMutexW(...)
+    AshitaCore:OpenMutexA(...)
+    AshitaCore:OpenMutexW(...)
 
-    RegQueryValueExA
+    AshitaCore:RegQueryValueExA(...)
 
-    CreateWindowExA
-    CreateWindowExW
-    ExitProcess
-    GetSystemMetrics
-    GetWindowTextA
-    GetWindowTextW
-    LoadBitmapW
-    RegisterClassA
-    RegisterClassW
-    RegisterClassExA
-    RegisterClassExW
-    RemoveMenu
-    SendMessageA
-    SetCursorPos
-    SetForegroundWindow
-    SetPriorityClass
-    SetWindowsHookExA
-    SetWindowTextA
-    SetWindowTextW
+    AshitaCore:CreateWindowExA(...)
+    AshitaCore:CreateWindowExW(...)
+    AshitaCore:ExitProcess(...)
+    AshitaCore:GetSystemMetrics(...)
+    AshitaCore:GetWindowTextA(...)
+    AshitaCore:GetWindowTextW(...)
+    AshitaCore:LoadBitmapW(...)
+    AshitaCore:RegisterClassA(...)
+    AshitaCore:RegisterClassW(...)
+    AshitaCore:RegisterClassExA(...)
+    AshitaCore:RegisterClassExW(...)
+    AshitaCore:RemoveMenu(...)
+    AshitaCore:SendMessageA(...)
+    AshitaCore:SetCursorPos(...)
+    AshitaCore:SetForegroundWindow(...)
+    AshitaCore:SetPriorityClass(...)
+    AshitaCore:SetWindowsHookExA(...)
+    AshitaCore:SetWindowTextA(...)
+    AshitaCore:SetWindowTextW(...)
 --]]
