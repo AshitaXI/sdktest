@@ -32,24 +32,24 @@ local test = T{};
 --[[
 * Event called when the addon is processing incoming text.
 *
-* @param {object} args - The event arguments.
+* @param {object} e - The event arguments.
 --]]
-local function text_in_callback(args)
-    if (flags.has(args.message)) then
-        flags.set(args.message);
-        args.blocked = true;
+local function text_in_callback(e)
+    if (flags.has(e.message)) then
+        flags.set(e.message);
+        e.blocked = true;
     end
 end
 
 --[[
 * Event called when the addon is processing keyboard input. (WNDPROC)
 *
-* @param {object} args - The event arguments.
+* @param {object} e - The event arguments.
 --]]
-local function key_callback(args)
+local function key_callback(e)
     -- Look for F9 key presses..
-    local isF9      = args.wparam == 0x78;
-    local isKeyDown = not (bit.band(args.lparam, bit.lshift(0x8000, 0x10)) == bit.lshift(0x8000, 0x10));
+    local isF9      = e.wparam == 0x78;
+    local isKeyDown = not (bit.band(e.lparam, bit.lshift(0x8000, 0x10)) == bit.lshift(0x8000, 0x10));
 
     if (not isF9 or not isKeyDown) then
         return;
@@ -58,13 +58,13 @@ local function key_callback(args)
     -- Check if in the first input wait state..
     if (flags.is_set('sdktest:input_state_1') and not flags.is_set('sdktest:input_state_2')) then
         flags.set('sdktest:input_state_2');
-        args.blocked = true;
+        e.blocked = true;
     end
 
     -- Check if in the second input wait state..
     if (flags.is_set('sdktest:input_state_3') and not flags.is_set('sdktest:input_state_4')) then
         flags.set('sdktest:input_state_4');
-        args.blocked = true;
+        e.blocked = true;
     end
 end
 

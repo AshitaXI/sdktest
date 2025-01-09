@@ -105,6 +105,9 @@ local function run_test(test, cnt)
 
     if (m == nil) then
         print('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76Test file failed to load properly.\30\01');
+        if (err) then
+            print(('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01'):fmt(err));
+        end
         return false;
     end
 
@@ -184,14 +187,14 @@ end);
 --[[
 * Event called when the addon is processing a command.
 *
-* @param {table} args - The command arguments table.
+* @param {table} e - The command arguments table.
 --]]
-ashita.events.register('command', 'sdktest_main_command', function (args)
+ashita.events.register('command', 'sdktest_main_command', function (e)
     -- Execute a specific test..
     for _, v in pairs(registered_tests) do
-        if (v.cmd:ieq(args.command)) then
+        if (v.cmd:ieq(e.command)) then
             -- Mark the command as handled..
-            args.blocked = true;
+            e.blocked = true;
 
             -- Step the test counter..
             test_counter = test_counter + 1;
@@ -203,9 +206,9 @@ ashita.events.register('command', 'sdktest_main_command', function (args)
     end
 
     -- Execute all tests..
-    if (args.command:ieq('/sdktest all')) then
+    if (e.command:ieq('/sdktest all')) then
         -- Mark the command as handled..
-        args.blocked = true;
+        e.blocked = true;
 
         for _, v in pairs(registered_tests) do
             -- Step the test counter..
