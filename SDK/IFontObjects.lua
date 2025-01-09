@@ -24,12 +24,9 @@ require 'common';
 --[[
 * The main test module table.
 --]]
-local test = T{};
-
---[[
-* Test properties.
---]]
-test.uniqueSuffix = '';
+local test = T{
+    unique_suffix = '',
+};
 
 --[[
 * Cleans up an object until it is completely gone.
@@ -45,6 +42,7 @@ local function cleanup_object(manager, alias)
     while (o ~= nil) do
         manager:Delete(alias);
         o = manager:Get(alias);
+        coroutine.sleepf(1);
     end
 end
 
@@ -54,14 +52,14 @@ end
 function test.init(cnt)
     -- Create a randomized seed to help generate unique entry names..
     math.randomseed(os.time() + cnt);
-    math.random(0, 100000);
-    math.random(0, 100000);
+    _ = math.random(0, 100000);
+    _ = math.random(0, 100000);
     local rnd = math.random(0, 100000);
     math.randomseed(os.time() + rnd + cnt);
     rnd = math.random(100000, 900000);
 
     -- Create a unique suffix for the objects to be used with these tests..
-    test.uniqueSuffix = string.format('_%d_%d_%d', addon.instance.current_frame, rnd, cnt);
+    test.unique_suffix = ('_%d_%d_%d'):fmt(addon.instance.current_frame, rnd, cnt);
 end
 
 --[[
@@ -69,16 +67,16 @@ end
 --]]
 function test.cleanup()
     -- Validate the manager objects..
-    local fontManager = AshitaCore:GetFontManager();
-    local primManager = AshitaCore:GetPrimitiveManager();
-    assert(fontManager ~= nil, 'GetFontManager returned an unexpected value.');
-    assert(primManager ~= nil, 'GetPrimitiveManager returned an unexpected value.');
+    local fmgr = AshitaCore:GetFontManager();
+    local pmgr = AshitaCore:GetPrimitiveManager();
+    assert(fmgr ~= nil, 'GetFontManager returned an unexpected value.');
+    assert(pmgr ~= nil, 'GetPrimitiveManager returned an unexpected value.');
 
     -- Cleanup the objects used by the tests..
-    cleanup_object(fontManager, string.format('sdktest1%s', test.uniqueSuffix));
-    cleanup_object(fontManager, string.format('sdktest2%s', test.uniqueSuffix));
-    cleanup_object(primManager, string.format('sdktest1%s', test.uniqueSuffix));
-    cleanup_object(primManager, string.format('sdktest2%s', test.uniqueSuffix));
+    cleanup_object(fmgr, ('sdktest1%s'):fmt(test.unique_suffix));
+    cleanup_object(fmgr, ('sdktest2%s'):fmt(test.unique_suffix));
+    cleanup_object(pmgr, ('sdktest1%s'):fmt(test.unique_suffix));
+    cleanup_object(pmgr, ('sdktest2%s'):fmt(test.unique_suffix));
 end
 
 --[[
@@ -86,428 +84,363 @@ end
 --]]
 function test.exec()
     -- Validate the manager objects..
-    local fontManager = AshitaCore:GetFontManager();
-    local primManager = AshitaCore:GetPrimitiveManager();
-    assert(fontManager ~= nil, 'GetFontManager returned an unexpected value.');
-    assert(primManager ~= nil, 'GetPrimitiveManager returned an unexpected value.');
+    local fmgr = AshitaCore:GetFontManager();
+    local pmgr = AshitaCore:GetPrimitiveManager();
+    assert(fmgr ~= nil, 'GetFontManager returned an unexpected value.');
+    assert(pmgr ~= nil, 'GetPrimitiveManager returned an unexpected value.');
 
-    -- Create two unique object names to use with the tests..
-    local uniqueName1 = string.format('sdktest1%s', test.uniqueSuffix);
-    local uniqueName2 = string.format('sdktest2%s', test.uniqueSuffix);
+    -- Prepare two unique object names to use with the tests..
+    local unique_name1 = ('sdktest1%s'):fmt(test.unique_suffix);
+    local unique_name2 = ('sdktest2%s'):fmt(test.unique_suffix);
 
     --[[
-    Font Manager Testing
+    FontManager Testing
     --]]
 
     -- Test creating a font object..
-    local f1 = fontManager:Create(uniqueName1);
-    assert(f1 ~= nil, 'Create returned an unexpected value.');
+    local font1 = fmgr:Create(unique_name1);
+    assert(font1 ~= nil, 'Create returned an unexpected value.');
 
     -- Test getting a font object..
-    local f2 = fontManager:Get(uniqueName1);
-    assert(f2 ~= nil, 'Get returned an unexpected value.');
-    assert(f1 == f2, 'Get returned an unexpected value.');
+    local font2 = fmgr:Get(unique_name1);
+    assert(font2 ~= nil, 'Get returned an unexpected value.');
+    assert(font2 == font1, 'Get returned an unexpected value.');
 
     -- Test deleting a font object..
-    fontManager:Delete(uniqueName1);
-    f1 = fontManager:Get(uniqueName1);
-    assert(f1 == nil, 'Get returned an unexpected value.');
+    fmgr:Delete(unique_name1);
+    font1 = fmgr:Get(unique_name1);
+    assert(font1 == nil, 'Get returned an unexpected value. (Delete)');
 
-    -- Test setting the focused font object..
-    f1 = fontManager:Create(uniqueName1);
-    assert(f1 ~= nil, 'Create returned an unexpected value.');
-    fontManager:SetFocusedObject('');
-    f2 = fontManager:GetFocusedObject();
-    assert(f2 == nil, 'GetFocusedObject returned an unexpected value.');
-    fontManager:SetFocusedObject(f1:GetAlias());
-    f2 = fontManager:GetFocusedObject();
-    assert(f2 == f1, 'GetFocusedObject returned an unexpected value.');
-
-    fontManager:Delete(uniqueName1);
+    -- Test the focused font object..
+    font1 = fmgr:Create(unique_name1);
+    assert(font1 ~= nil, 'Create returned an unexpected value.');
+    fmgr:SetFocusedObject('');
+    font2 = fmgr:GetFocusedObject();
+    assert(font2 == nil, 'GetFocusedObject returned an unexpected value.');
+    fmgr:SetFocusedObject(font1:GetAlias());
+    font2 = fmgr:GetFocusedObject();
+    assert(font2 ~= nil, 'GetFocusedObject returned an unexpected value.');
+    assert(font2 == font1, 'GetFocusedObject returned an unexpected value.');
+    fmgr:Delete(unique_name1);
 
     --[[
-    Font Object Testing
+    FontObject Testing
 
-    Note:   The below tests are to attempt to call the Get/Set handlers of a font object. Please note the comments next to
-            some of the calls. Calls like SetAlias should never happen manually by a user/developer! This is just for testing.
+    Note:   The below tests are to ensure the property settings of FontObjects are honored. Please be sure to read the comments regarding
+            some of these property handlers as they are not all intended to be called by developers!
     --]]
 
-    f1 = fontManager:Create(uniqueName1);
-    assert(f1 ~= nil, 'Create returned an unexpected value.');
-    f1:SetAlias(uniqueName2); -- Warning: Developers should never call this!
-    f1:SetVisible(true);
-    f1:SetCanFocus(false);
-    f1:SetLocked(true);
-    f1:SetLockedZ(true);
-    f1:SetIsDirty(true); -- This will be automatically reset internally next-frame when the font is rebuilt.
-    f1:SetWindowWidth(1920);
-    f1:SetWindowHeight(1024);
-    f1:SetFontFamily('Arial');
-    f1:SetFontHeight(12);
-    f1:SetCreateFlags(FontCreateFlags.Bold); -- Setting to bold; but then we will call 'SetBold' to false and ensure it is honored.
-    f1:SetDrawFlags(FontDrawFlags.Outlined);
-    f1:SetBold(false); -- Overriding the 'SetCreateFlags' call above.
-    f1:SetItalic(false);
-    f1:SetRightJustified(false);
-    f1:SetStrikeThrough(false);
-    f1:SetUnderlined(false);
-    f1:SetColor(0xFFFF0000);         -- Color: Red
-    f1:SetColorOutline(0xFF00FF00);  -- Color: Green
-    f1:SetPadding(0);
-    f1:SetPositionX(2); -- Set the position to 2x2 for 'HitTest' call testing.
-    f1:SetPositionY(2);
-    f1:SetAutoResize(true);
-    f1:SetAnchor(FrameAnchor.TopRight);
-    f1:SetAnchorParent(FrameAnchor.BottomLeft);
-    f1:SetText('Hello world!');
-    f1:SetParent(nil);
+    -- Create and adjust the properties of a font object..
+    font1 = fmgr:Create(unique_name1);
+    assert(font1 ~= nil, 'Create returned an unexpected value.');
+    font1:SetAlias(unique_name2);               -- WARN: You should NEVER call this!
+    font1:SetVisible(true);
+    font1:SetCanFocus(false);
+    font1:SetLocked(true);
+    font1:SetLockedZ(true);
+    font1:SetIsDirty(true);                     -- This will automatically reset internally on the next frame when the font is rebuilt.
+    font1:SetWindowWidth(1920);
+    font1:SetWindowHeight(1024);
+    font1:SetFontFamily('Arial');
+    font1:SetFontHeight(12);
+    font1:SetCreateFlags(FontCreateFlags.Bold); -- Note: Setting to bold here but manually calling SetBold(false) to test if it is honored.
+    font1:SetDrawFlags(FontDrawFlags.Outlined);
+    font1:SetBold(false);                       -- Note: Overriding the 'SetCreateFlags' call above.
+    font1:SetItalic(false);
+    font1:SetRightJustified(false);
+    font1:SetStrikeThrough(false);
+    font1:SetUnderlined(false);
+    font1:SetColor(0xFFFF0000);
+    font1:SetColorOutline(0xFF00FF00);
+    font1:SetPadding(0);
+    font1:SetPositionX(2);
+    font1:SetPositionY(2);
+    font1:SetAutoResize(true);
+    font1:SetAnchor(FrameAnchor.TopRight);
+    font1:SetAnchorParent(FrameAnchor.BottomLeft);
+    font1:SetText('Hello world!');
+    font1:SetParent(nil);
 
-    -- Allow the font to rebuild..
+    -- Yield to allow the font to rebuild based on our changes..
     coroutine.sleepf(2);
 
-    -- Test the font values were properly set..
-    local v = f1:GetAlias();
-    assert(v == uniqueName2, 'GetAlias returned an unexpected value.');
-    v = f1:GetVisible();
-    assert(v == true, 'GetVisible returned an unexpected value.');
-    v = f1:GetCanFocus();
-    assert(v == false, 'GetCanFocus returned an unexpected value.');
-    v = f1:GetLocked();
-    assert(v == true, 'GetLocked returned an unexpected value.');
-    v = f1:GetLockedZ();
-    assert(v == true, 'GetLockedZ returned an unexpected value.');
-    v = f1:GetIsDirty();
-    assert(v == false, 'GetIsDirty returned an unexpected value.');
-    v = f1:GetWindowWidth();
-    assert(v == 1920, 'GetWindowWidth returned an unexpected value.');
-    v = f1:GetWindowHeight();
-    assert(v == 1024, 'GetWindowHeight returned an unexpected value.');
-    v = f1:GetFontFile();
-    assert(v == '', 'GetFontFile returned an unexpected value.');
-    v = f1:GetFontFamily();
-    assert(v == 'Arial', 'GetFontFamily returned an unexpected value.');
-    v = f1:GetFontHeight();
-    assert(v == 12, 'GetFontHeight returned an unexpected value.');
-    v = f1:GetCreateFlags();
-    assert(v == FontCreateFlags.None, 'GetCreateFlags returned an unexpected value.');
-    v = f1:GetDrawFlags();
-    assert(v == FontDrawFlags.Outlined, 'GetDrawFlags returned an unexpected value.');
-    v = f1:GetBold();
-    assert(v == false, 'GetBold returned an unexpected value.');
-    v = f1:GetItalic();
-    assert(v == false, 'GetItalic returned an unexpected value.');
-    v = f1:GetRightJustified();
-    assert(v == false, 'GetRightJustified returned an unexpected value.');
-    v = f1:GetStrikeThrough();
-    assert(v == false, 'GetStrikeThrough returned an unexpected value.');
-    v = f1:GetUnderlined();
-    assert(v == false, 'GetUnderlined returned an unexpected value.');
-    v = f1:GetColor();
-    assert(v == 0xFFFF0000, 'GetColor returned an unexpected value.');
-    v = f1:GetColorOutline();
-    assert(v == 0xFF00FF00, 'GetColorOutline returned an unexpected value.');
-    v = f1:GetPadding();
-    assert(v == 0.0, 'GetPadding returned an unexpected value.');
-    v = f1:GetPositionX();
-    assert(v == 2.0, 'GetPositionX returned an unexpected value.');
-    v = f1:GetPositionY();
-    assert(v == 2.0, 'GetPositionY returned an unexpected value.');
-    v = f1:GetAutoResize();
-    assert(v == true, 'GetAutoResize returned an unexpected value.');
-    v = f1:GetAnchor();
-    assert(v == FrameAnchor.TopRight, 'GetAnchor returned an unexpected value.');
-    v = f1:GetAnchorParent();
-    assert(v == FrameAnchor.BottomLeft, 'GetAnchorParent returned an unexpected value.');
-    v = f1:GetText();
-    assert(v == 'Hello world!', 'GetText returned an unexpected value.');
-    v = f1:GetParent();
-    assert(v == nil, 'GetParent returned an unexpected value.');
-    v = f1:GetRealPositionX();
-    assert(v == 2, 'GetRealPositionX returned an unexpected value.');
-    v = f1:GetRealPositionY();
-    assert(v == 2, 'GetRealPositionY returned an unexpected value.');
+    -- Test if the properties of the font object match what is expected..
+    assert(font1:GetAlias() == unique_name2, 'GetAlias returned an unexpected value.');
+    assert(font1:GetVisible() == true, 'GetVisible returned an unexpected value.');
+    assert(font1:GetCanFocus() == false, 'GetCanFocus returned an unexpected value.');
+    assert(font1:GetLocked() == true, 'GetLocked returned an unexpected value.');
+    assert(font1:GetLockedZ() == true, 'GetLockedZ returned an unexpected value.');
+    assert(font1:GetIsDirty() == false, 'GetIsDirty returned an unexpected value.');
+    assert(font1:GetWindowWidth() == 1920, 'GetWindowWidth returned an unexpected value.');
+    assert(font1:GetWindowHeight() == 1024, 'GetWindowHeight returned an unexpected value.');
+    assert(font1:GetFontFile() == '', 'GetFontFile returned an unexpected value.');
+    assert(font1:GetFontFamily() == 'Arial', 'GetFontFamily returned an unexpected value.');
+    assert(font1:GetFontHeight() == 12, 'GetFontHeight returned an unexpected value.');
+    assert(font1:GetCreateFlags() == FontCreateFlags.None, 'GetCreateFlags returned an unexpected value.');
+    assert(font1:GetDrawFlags() == FontDrawFlags.Outlined, 'GetDrawFlags returned an unexpected value.');
+    assert(font1:GetBold() == false, 'GetBold returned an unexpected value.');
+    assert(font1:GetItalic() == false, 'GetItalic returned an unexpected value.');
+    assert(font1:GetRightJustified() == false, 'GetRightJustified returned an unexpected value.');
+    assert(font1:GetStrikeThrough() == false, 'GetStrikeThrough returned an unexpected value.');
+    assert(font1:GetUnderlined() == false, 'GetUnderlined returned an unexpected value.');
+    assert(font1:GetColor() == 0xFFFF0000, 'GetColor returned an unexpected value.');
+    assert(font1:GetColorOutline() == 0xFF00FF00, 'GetColorOutline returned an unexpected value.');
+    assert(font1:GetPadding() == 0.0, 'GetPadding returned an unexpected value.');
+    assert(font1:GetPositionX() == 2, 'GetPositionX returned an unexpected value.');
+    assert(font1:GetPositionY() == 2, 'GetPositionY returned an unexpected value.');
+    assert(font1:GetAutoResize() == true, 'GetAutoResize returned an unexpected value.');
+    assert(font1:GetAnchor() == FrameAnchor.TopRight, 'GetAnchor returned an unexpected value.');
+    assert(font1:GetAnchorParent() == FrameAnchor.BottomLeft, 'GetAnchorParent returned an unexpected value.');
+    assert(font1:GetText() == 'Hello world!', 'GetText returned an unexpected value.');
+    assert(font1:GetParent() == nil, 'GetParent returned an unexpected value.');
+    assert(font1:GetBackground() ~= nil, 'GetBackground returned an unexpected value.');
+    assert(font1:GetRealPositionX() == 2, 'GetRealPositionX returned an unexpected value.');
+    assert(font1:GetRealPositionY() == 2, 'GetRealPositionY returned an unexpected value.');
 
     --[[
-    Test the font size..
-
-    Note:   This is a calculated assumption/size. The users system can cause this to not always be exactly the same
-            as the expected values. Because of this, we will only warn if they don't match instead of error.
+    Note:   The following test is to check the text size calculations. The users system settings (ie. DPI scaling) can
+            cause this to not return the expected values. Due to this, instead of failing the test, we will simply warn
+            the user if the sizes are unexpected.
     --]]
 
     local size = SIZE.new();
-    f1:GetTextSize(size);
+    font1:GetTextSize(size);
     assert(size.cx ~= 0 and size.cy ~= 0, 'GetTextSize returned an unexpected value.');
 
+    -- Test the font size for known good values based on 100% DPI..
     if (size.cx ~= 81 or size.cy ~= 18) then
-        print("\30\81[\30\06SDKTest\30\81] \30\104Warning: \30\106GetTextSize returned an unexpected value; but this is not considered critical.\30\01");
+        print(chat.header('SDKTest'):append(chat.warn('Warning: ')):append(chat.message('GetTextSize returned an unexpected value; however this is not considered critical.')));
     end
 
     --[[
-    Test the font location..
-
-    Note:   Fonts are rendered as a rect regardless of the characters used. The position is treated as the top-left most point
-            the font object. In this test, we moved the font to 2x2, so it should be the first position that is valid.
+    Note:   The following test is to check for valid font hit testing. Fonts are rendered as a rect regardless of the
+            characters used. The position is treated as the top-left most point of the font object. The current font
+            being tested has been set to 2 x 2 for its x/y position, so the first valid hit should be there.
     --]]
 
-    v = f1:HitTest(0, 0);
-    assert(v == false, 'HitTest was expected to fail.');
-    v = f1:HitTest(1, 1);
-    assert(v == false, 'HitTest was expected to fail.');
-    v = f1:HitTest(2, 2);
-    assert(v == true, 'HitTest was expected to succeed.');
+    assert(font1:HitTest(0, 0) == false, 'HitTest returned an unexpected value. (HitTest was expected to fail.)');
+    assert(font1:HitTest(1, 1) == false, 'HitTest returned an unexpected value. (HitTest was expected to fail.)');
+    assert(font1:HitTest(2, 2) == true, 'HitTest returned an unexpected value. (HitTest was expected to succeed.)');
 
     --[[
-    Primitive Object Testing (Font Background)
+    FontObject Background Testing (PrimitiveObject)
 
-    Note:   The below tests are to attempt to call the Get/Set handlers of a fonts background primitive object. Please note 
-            the comments next to some of the calls. Calls like SetAlias should never happen manually by a user/developer! 
-            This is just for testing.
+    Note:   The below tests are to ensure the property settings of the FontObjects' background primitive are honored.
+            Please be sure to read the comments regarding some of these property handlers as they are not all intended
+            to be called by developers!
     --]]
 
-    local b = f1:GetBackground();
-    assert(v ~= nil, 'GetBackground returned an unexpected value.');
+    font1:GetBackground():SetAlias(('notused%s'):fmt(unique_name1)); -- WARN: You should NEVER call this!
+    font1:GetBackground():SetTextureOffsetX(13);
+    font1:GetBackground():SetTextureOffsetY(37);
+    font1:GetBackground():SetBorderVisible(true);
+    font1:GetBackground():SetBorderColor(0xFF0000FF);
+    font1:GetBackground():SetBorderFlags(15);
 
-    b:SetAlias(string.format('notused%s', uniqueName1)); -- Warning: Developers should never call this! (Font backgrounds don't use an alias anyway.)
-    b:SetTextureOffsetX(13);
-    b:SetTextureOffsetY(37);
-    b:SetBorderVisible(true);
-    b:SetBorderColor(0xFF0000FF); -- Color: Blue
-    b:SetBorderFlags(15);
+    local r = RECT.new();
+    r.left  = 1;
+    r.top   = 2;
+    r.right = 3;
+    r.bottom= 4;
 
-    local r     = RECT.new();
-    r.left      = 1;
-    r.top       = 2;
-    r.right     = 3;
-    r.bottom    = 4;
+    font1:GetBackground():SetBorderSizes(r);
+    font1:GetBackground():SetVisible(true);
+    font1:GetBackground():SetPositionX(1);
+    font1:GetBackground():SetPositionY(2);
+    font1:GetBackground():SetCanFocus(false);
+    font1:GetBackground():SetLocked(true);
+    font1:GetBackground():SetLockedZ(true);
+    font1:GetBackground():SetScaleX(1);
+    font1:GetBackground():SetScaleY(1);
+    font1:GetBackground():SetWidth(123);
+    font1:GetBackground():SetHeight(123);
+    font1:GetBackground():SetDrawFlags(0);
+    font1:GetBackground():SetColor(0xFFFFFFFF);
 
-    b:SetBorderSizes(r);
-    b:SetVisible(true);
-    b:SetPositionX(1);
-    b:SetPositionY(2);
-    b:SetCanFocus(false);   -- Not used; the font itself controls its focus ability.
-    b:SetLocked(true);      -- Not used; the font itself controls its locked status.
-    b:SetLockedZ(true);     -- Not used; the font itself controls its locked z status.
-    b:SetScaleX(1);
-    b:SetScaleY(1);
-    b:SetWidth(123);
-    b:SetHeight(123);
-    b:SetColor(0xFFFFFFFF); -- Color: White
-
-    -- Allow the font (and its background) to rebuild..
+    -- Yield to allow the font to rebuild based on our changes..
     coroutine.sleepf(2);
 
-    -- Test the primitive values were properly set..
-    v = b:GetAlias();
-    assert(v == string.format('notused%s', uniqueName1), 'GetAlias returned an unexpected value.');
-    v = b:GetTextureOffsetX();
-    assert(v == 13, 'GetTextureOffsetX returned an unexpected value.');
-    v = b:GetTextureOffsetY();
-    assert(v == 37, 'GetTextureOffsetY returned an unexpected value.');
-    v = b:GetBorderVisible();
-    assert(v == true, 'GetBorderVisible returned an unexpected value.');
-    v = b:GetBorderColor();
-    assert(v == 0xFF0000FF, 'GetBorderColor returned an unexpected value.');
-    v = b:GetBorderFlags();
-    assert(v == 15, 'GetBorderFlags returned an unexpected value.');
-    v = b:GetBorderSizes();
-    assert(v.left == 1, 'GetBorderSizes returned an unexpected value.');
-    assert(v.top == 2, 'GetBorderSizes returned an unexpected value.');
-    assert(v.right == 3, 'GetBorderSizes returned an unexpected value.');
-    assert(v.bottom == 4, 'GetBorderSizes returned an unexpected value.');
-    v = b:GetVisible();
-    assert(v == true, 'GetVisible returned an unexpected value.');
-    v = b:GetPositionX();
-    assert(v == 1.0, 'GetPositionX returned an unexpected value.');
-    v = b:GetPositionY();
-    assert(v == 2.0, 'GetPositionY returned an unexpected value.');
-    v = b:GetCanFocus();
-    assert(v == false, 'GetCanFocus returned an unexpected value.');
-    v = b:GetLocked();
-    assert(v == true, 'GetLocked returned an unexpected value.');
-    v = b:GetLockedZ();
-    assert(v == true, 'GetLockedZ returned an unexpected value.');
-    v = b:GetScaleX();
-    assert(v == 1, 'GetScaleX returned an unexpected value.');
-    v = b:GetScaleY();
-    assert(v == 1, 'GetScaleY returned an unexpected value.');
-    v = b:GetWidth();
-    assert(v == 123, 'GetWidth returned an unexpected value.');
-    v = b:GetHeight();
-    assert(v == 123, 'GetHeight returned an unexpected value.');
-    v = b:GetColor();
-    assert(v == 0xFFFFFFFF, 'GetColor returned an unexpected value.');
+    -- Test if the properties of the font object background match what is expected..
+    assert(font1:GetBackground():GetAlias() == ('notused%s'):fmt(unique_name1), 'GetAlias returned an unexpected value.');
+    assert(font1:GetBackground():GetTextureOffsetX() == 13, 'GetTextureOffsetX returned an unexpected value.');
+    assert(font1:GetBackground():GetTextureOffsetY() == 37, 'GetTextureOffsetY returned an unexpected value.');
+    assert(font1:GetBackground():GetBorderVisible() == true, 'GetBorderVisible returned an unexpected value.');
+    assert(font1:GetBackground():GetBorderColor() == 0xFF0000FF, 'GetBorderColor returned an unexpected value.');
+    assert(font1:GetBackground():GetBorderFlags() == 15, 'GetBorderFlags returned an unexpected value.');
+    assert(font1:GetBackground():GetBorderSizes() ~= nil, 'GetBorderSizes returned an unexpected value.');
+    r = font1:GetBackground():GetBorderSizes();
+    assert(r.left == 1, 'GetBorderFlags returned an unexpected value.');
+    assert(r.top == 2, 'GetBorderFlags returned an unexpected value.');
+    assert(r.right == 3, 'GetBorderFlags returned an unexpected value.');
+    assert(r.bottom == 4, 'GetBorderFlags returned an unexpected value.');
+    assert(font1:GetBackground():GetVisible() == true, 'GetVisible returned an unexpected value.');
+    assert(font1:GetBackground():GetPositionX() == 1, 'GetPositionX returned an unexpected value.');
+    assert(font1:GetBackground():GetPositionY() == 2, 'GetPositionY returned an unexpected value.');
+    assert(font1:GetBackground():GetCanFocus() == false, 'GetCanFocus returned an unexpected value.');
+    assert(font1:GetBackground():GetLocked() == true, 'GetLocked returned an unexpected value.');
+    assert(font1:GetBackground():GetLockedZ() == true, 'GetLockedZ returned an unexpected value.');
+    assert(font1:GetBackground():GetScaleX() == 1, 'GetScaleX returned an unexpected value.');
+    assert(font1:GetBackground():GetScaleY() == 1, 'GetScaleY returned an unexpected value.');
+    assert(font1:GetBackground():GetWidth() == 123, 'GetWidth returned an unexpected value.');
+    assert(font1:GetBackground():GetHeight() == 123, 'GetHeight returned an unexpected value.');
+    assert(font1:GetBackground():GetDrawFlags() == 0, 'GetDrawFlags returned an unexpected value.');
+    assert(font1:GetBackground():GetColor() == 0xFFFFFFFF, 'GetColor returned an unexpected value.');
 
-    -- Cleanup the used font objects..
-    cleanup_object(fontManager, uniqueName1);
-    cleanup_object(fontManager, uniqueName2);
+    cleanup_object(fmgr, unique_name1);
+    cleanup_object(fmgr, unique_name2);
+
     coroutine.sleepf(2);
 
     --[[
-    Primitive Manager Testing
+    PrimitiveManager Testing
     --]]
 
     -- Test creating a primitive object..
-    local p1 = primManager:Create(uniqueName1);
-    assert(p1 ~= nil, 'Create returned an unexpected value.');
+    local prim1 = pmgr:Create(unique_name1);
+    assert(prim1 ~= nil, 'Create returned an unexpected value.');
 
     -- Test getting a primitive object..
-    local p2 = primManager:Get(uniqueName1);
-    assert(p2 ~= nil, 'Get returned an unexpected value.');
-    assert(p1 == p2, 'Get returned an unexpected value.');
+    local prim2 = pmgr:Get(unique_name1);
+    assert(prim2 ~= nil, 'Get returned an unexpected value.');
+    assert(prim2 == prim1, 'Get returned an unexpected value.');
 
     -- Test deleting a primitive object..
-    primManager:Delete(uniqueName1);
-    p1 = primManager:Get(uniqueName1);
-    assert(p1 == nil, 'Get returned an unexpected value.');
+    pmgr:Delete(unique_name1);
+    prim1 = pmgr:Get(unique_name1);
+    assert(prim1 == nil, 'Get returned an unexpected value. (Delete)');
 
-    -- Test setting the focused primitive object..
-    p1 = primManager:Create(uniqueName1);
-    assert(p1 ~= nil, 'Create returned an unexpected value.');
-    primManager:SetFocusedObject('');
-    p2 = primManager:GetFocusedObject();
-    assert(p2 == nil, 'GetFocusedObject returned an unexpected value.');
-    primManager:SetFocusedObject(p1:GetAlias());
-    p2 = primManager:GetFocusedObject();
-    assert(p2 == p1, 'GetFocusedObject returned an unexpected value.');
-
-    primManager:Delete(uniqueName1);
+    -- Test the focused primitive object..
+    prim1 = pmgr:Create(unique_name1);
+    assert(prim1 ~= nil, 'Create returned an unexpected value.');
+    pmgr:SetFocusedObject('');
+    prim2 = pmgr:GetFocusedObject();
+    assert(prim2 == nil, 'GetFocusedObject returned an unexpected value.');
+    pmgr:SetFocusedObject(prim1:GetAlias());
+    prim2 = pmgr:GetFocusedObject();
+    assert(prim2 ~= nil, 'GetFocusedObject returned an unexpected value.');
+    assert(prim2 == prim1, 'GetFocusedObject returned an unexpected value.');
+    pmgr:Delete(unique_name1);
 
     --[[
-    Primitive Object Testing
+    PrimitiveObject Testing
 
-    Note:   The below tests are to attempt to call the Get/Set handlers of a primitive object. Please note the
-            comments next to some of the calls. Calls like SetAlias should never happen manually by a user/developer! 
-            This is just for testing.
+    Note:   The below tests are to ensure the property settings of PrimitiveObjects are honored. Please be sure to read the comments regarding
+            some of these property handlers as they are not all intended to be called by developers!
     --]]
 
-    p1 = primManager:Create(uniqueName1);
-    p1:SetAlias(uniqueName2); -- Warning: Developers should never call this!
-    p1:SetTextureOffsetX(13);
-    p1:SetTextureOffsetY(37);
-    p1:SetBorderVisible(true);
-    p1:SetBorderColor(0xFF0000FF); -- Color: Blue
-    p1:SetBorderFlags(15);
+    -- Create and adjust the properties of a font object..
+    prim1 = pmgr:Create(unique_name1);
+    assert(prim1 ~= nil, 'Create returned an unexpected value.');
+    prim1:SetAlias(unique_name2); -- WARN: You should NEVER call this!
+    prim1:SetTextureOffsetX(13);
+    prim1:SetTextureOffsetY(37);
+    prim1:SetBorderVisible(true);
+    prim1:SetBorderColor(0xFF0000FF);
+    prim1:SetBorderFlags(15);
 
-    r           = RECT.new();
-    r.left      = 1;
-    r.top       = 2;
-    r.right     = 3;
-    r.bottom    = 4;
+    r       = RECT.new();
+    r.left  = 1;
+    r.top   = 2;
+    r.right = 3;
+    r.bottom= 4;
 
-    p1:SetBorderSizes(r);
-    p1:SetVisible(true);
-    p1:SetPositionX(1);
-    p1:SetPositionY(2);
-    p1:SetCanFocus(false);
-    p1:SetLocked(true);
-    p1:SetLockedZ(true);
-    p1:SetScaleX(1);
-    p1:SetScaleY(1);
-    p1:SetWidth(123);
-    p1:SetHeight(123);
-    p1:SetColor(0xFFFFFFFF); -- Color: White
+    prim1:SetBorderSizes(r);
+    prim1:SetVisible(true);
+    prim1:SetPositionX(1);
+    prim1:SetPositionY(2);
+    prim1:SetCanFocus(false);
+    prim1:SetLocked(true);
+    prim1:SetLockedZ(true);
+    prim1:SetScaleX(1);
+    prim1:SetScaleY(1);
+    prim1:SetWidth(123);
+    prim1:SetHeight(123);
+    prim1:SetDrawFlags(0);
+    prim1:SetColor(0xFFFFFFFF);
 
-    -- Allow the primitive to rebuild..
+    -- Yield to allow the primitive to rebuild based on our changes..
     coroutine.sleepf(2);
 
-    -- Test the primitive values were properly set..
-    v = p1:GetAlias();
-    assert(v == uniqueName2, 'GetAlias returned an unexpected value.');
-    v = p1:GetTextureOffsetX();
-    assert(v == 13, 'GetTextureOffsetX returned an unexpected value.');
-    v = p1:GetTextureOffsetY();
-    assert(v == 37, 'GetTextureOffsetY returned an unexpected value.');
-    v = p1:GetBorderVisible();
-    assert(v == true, 'GetBorderVisible returned an unexpected value.');
-    v = p1:GetBorderColor();
-    assert(v == 0xFF0000FF, 'GetBorderColor returned an unexpected value.');
-    v = p1:GetBorderFlags();
-    assert(v == 15, 'GetBorderFlags returned an unexpected value.');
-    v = p1:GetBorderSizes();
-    assert(v.left == 1, 'GetBorderSizes returned an unexpected value.');
-    assert(v.top == 2, 'GetBorderSizes returned an unexpected value.');
-    assert(v.right == 3, 'GetBorderSizes returned an unexpected value.');
-    assert(v.bottom == 4, 'GetBorderSizes returned an unexpected value.');
-    v = p1:GetVisible();
-    assert(v == true, 'GetVisible returned an unexpected value.');
-    v = p1:GetPositionX();
-    assert(v == 1.0, 'GetPositionX returned an unexpected value.');
-    v = p1:GetPositionY();
-    assert(v == 2.0, 'GetPositionY returned an unexpected value.');
-    v = p1:GetCanFocus();
-    assert(v == false, 'GetCanFocus returned an unexpected value.');
-    v = p1:GetLocked();
-    assert(v == true, 'GetLocked returned an unexpected value.');
-    v = p1:GetLockedZ();
-    assert(v == true, 'GetLockedZ returned an unexpected value.');
-    v = p1:GetScaleX();
-    assert(v == 1, 'GetScaleX returned an unexpected value.');
-    v = p1:GetScaleY();
-    assert(v == 1, 'GetScaleY returned an unexpected value.');
-    v = p1:GetWidth();
-    assert(v == 123, 'GetWidth returned an unexpected value.');
-    v = p1:GetHeight();
-    assert(v == 123, 'GetHeight returned an unexpected value.');
-    v = p1:GetColor();
-    assert(v == 0xFFFFFFFF, 'GetColor returned an unexpected value.');
+    -- Test if the properties of the primitive object match what is expected..
+    assert(prim1:GetAlias() == unique_name2, 'GetAlias returned an unexpected value.');
+    assert(prim1:GetTextureOffsetX() == 13, 'GetTextureOffsetX returned an unexpected value.');
+    assert(prim1:GetTextureOffsetY() == 37, 'GetTextureOffsetY returned an unexpected value.');
+    assert(prim1:GetBorderVisible() == true, 'GetBorderVisible returned an unexpected value.');
+    assert(prim1:GetBorderColor() == 0xFF0000FF, 'GetBorderColor returned an unexpected value.');
+    assert(prim1:GetBorderFlags() == 15, 'GetBorderFlags returned an unexpected value.');
+    assert(prim1:GetBorderSizes() ~= nil, 'GetBorderSizes returned an unexpected value.');
+    r = prim1:GetBorderSizes();
+    assert(r.left == 1, 'GetBorderFlags returned an unexpected value.');
+    assert(r.top == 2, 'GetBorderFlags returned an unexpected value.');
+    assert(r.right == 3, 'GetBorderFlags returned an unexpected value.');
+    assert(r.bottom == 4, 'GetBorderFlags returned an unexpected value.');
+    assert(prim1:GetVisible() == true, 'GetVisible returned an unexpected value.');
+    assert(prim1:GetPositionX() == 1, 'GetPositionX returned an unexpected value.');
+    assert(prim1:GetPositionY() == 2, 'GetPositionY returned an unexpected value.');
+    assert(prim1:GetCanFocus() == false, 'GetCanFocus returned an unexpected value.');
+    assert(prim1:GetLocked() == true, 'GetLocked returned an unexpected value.');
+    assert(prim1:GetLockedZ() == true, 'GetLockedZ returned an unexpected value.');
+    assert(prim1:GetScaleX() == 1, 'GetScaleX returned an unexpected value.');
+    assert(prim1:GetScaleY() == 1, 'GetScaleY returned an unexpected value.');
+    assert(prim1:GetWidth() == 123, 'GetWidth returned an unexpected value.');
+    assert(prim1:GetHeight() == 123, 'GetHeight returned an unexpected value.');
+    assert(prim1:GetDrawFlags() == 0, 'GetDrawFlags returned an unexpected value.');
+    assert(prim1:GetColor() == 0xFFFFFFFF, 'GetColor returned an unexpected value.');
 
     --[[
-    Test the primitive location..
-
-    Note:   Primitives are rendered as a rect regardless of the settings used. The position is treated as the top-left most point
-            the primitive object. In this test, we moved the object to 2x2, so it should be the first position that is valid.
+    Note:   The following test is to check for valid primitive hit testing. Primitives are rendered as a rect regardless
+            of the settings used. The position is treated as the top-left most point of the primitive object. The current
+            primitive being tested has been set to 2 x 2 for its x/y position, so the first valid hit should be there.
     --]]
 
-    v = p1:HitTest(0, 0);
-    assert(v == false, 'HitTest was expected to fail.');
-    v = p1:HitTest(1, 1);
-    assert(v == false, 'HitTest was expected to fail.');
-    v = p1:HitTest(2, 2);
-    assert(v == true, 'HitTest was expected to succeed.');
+    assert(prim1:HitTest(0, 0) == false, 'HitTest returned an unexpected value. (HitTest was expected to fail.)');
+    assert(prim1:HitTest(1, 1) == false, 'HitTest returned an unexpected value. (HitTest was expected to fail.)');
+    assert(prim1:HitTest(2, 2) == true, 'HitTest returned an unexpected value. (HitTest was expected to succeed.)');
 
     --[[
-    Test setting the primitive texture..
-
-    Note: Ashita.dll has two embedded images inside of it. One is the Moogle icon Ashita uses. We will be using that icon for this test.
+    Note:   The following tests are used to ensure the primitive can be set to an image texture.
     --]]
 
-    v = p1:SetTextureFromResource('Ashita.dll', '1002');
-    assert(v == true, 'SetTextureFromResource returned an unexpected value.');
+    -- Test setting the primitive texture from a loaded module..
+    assert(prim1:SetTextureFromResource('Ashita.dll', '1002') == true, 'SetTextureFromResource returned an unexpected value.');
+    coroutine.sleepf(2);
+    assert(prim1:GetWidth() == 256, 'GetWidth returned an unexpected value.');
+    assert(prim1:GetHeight() == 256, 'GetHeight returned an unexpected value.');
 
-    -- Allow the primitive to rebuild..
+    -- Test setting hte primitive texture from the Ashita resource cache..
+    assert(prim1:SetTextureFromResourceCache('icons') == true, 'SetTextureFromResourceCache returned an unexpected value.');
+    coroutine.sleepf(2);
+    assert(prim1:GetWidth() == 512, 'GetWidth returned an unexpected value.');
+    assert(prim1:GetHeight() == 512, 'GetHeight returned an unexpected value.');
+
+    -- Cleanup..
+    cleanup_object(pmgr, unique_name1);
+    cleanup_object(pmgr, unique_name2);
+
     coroutine.sleepf(2);
 
-    v = p1:GetWidth();
-    assert(v == 256, 'GetWidth returned an unexpected value.');
-    v = p1:GetHeight();
-    assert(v == 256, 'GetHeight returned an unexpected value.');
+    -- Test the manager visibility functions..
+    local fprev = fmgr:GetVisible();
+    local pprev = pmgr:GetVisible();
 
-    -- Test setting the primitive texture from a cached resource texture..
-    v = p1:SetTextureFromResourceCache('icons');
-    assert(v == true, 'SetTextureFromResourceCache returned an unexpected value.');
+    fmgr:SetVisible(false);
+    pmgr:SetVisible(false);
+
     coroutine.sleepf(2);
 
-    -- Cleanup the used primitive objects..
-    cleanup_object(primManager, uniqueName1);
-    cleanup_object(primManager, uniqueName2);
+    assert(fmgr:GetVisible() == false, 'GetVisible returned an unexpected value. (Font)');
+    assert(pmgr:GetVisible() == false, 'GetVisible returned an unexpected value. (Primitive)');
 
-    --[[
-    Test manager visibility..
-    --]]
+    fmgr:SetVisible(true);
+    pmgr:SetVisible(true);
 
-    local prev = fontManager:GetVisible();
-    fontManager:SetVisible(false);
-    local curr = fontManager:GetVisible();
-    fontManager:SetVisible(prev);
+    coroutine.sleepf(2);
 
-    assert(curr == false, 'GetVisible returned an unexpected value.');
+    assert(fmgr:GetVisible() == true, 'GetVisible returned an unexpected value. (Font)');
+    assert(pmgr:GetVisible() == true, 'GetVisible returned an unexpected value. (Primitive)');
 
-    prev = primManager:GetVisible();
-    primManager:SetVisible(false);
-    curr = primManager:GetVisible();
-    primManager:SetVisible(prev);
-
-    assert(curr == false, 'GetVisible returned an unexpected value.');
+    fmgr:SetVisible(fprev);
+    pmgr:SetVisible(pprev);
 end
 
 -- Return the test module table..
@@ -516,9 +449,12 @@ return test;
 --[[
 Untested Functions:
 
-    FontObject:SetFontFile()
-
+    PrimitiveObject:Render()
     PrimitiveObject:SetTextureFromFile()
     PrimitiveObject:SetTextureFromMemory()
+    PrimitiveObject:SetTextureFromTexture()
 
+    FontObject:Render()
+    FontObject:GetFontFile()
+    FontObject:SetFontFile()
 --]]
