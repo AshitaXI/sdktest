@@ -43,24 +43,19 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local memManager = AshitaCore:GetMemoryManager();
-    assert(memManager ~= nil, 'GetMemoryManager returned an unexpected value.');
+    local mgr = AshitaCore:GetMemoryManager();
+    assert(mgr ~= nil, 'GetMemoryManager returned an unexpected value.');
 
     -- Validate the castbar object..
-    local castbar = memManager:GetCastBar();
+    local castbar = mgr:GetCastBar();
     assert(castbar ~= nil, 'GetCastBar returned an unexpected value.');
 
     --[[
-    There is no real / safe way to test these as we cannot guarantee pretty much any of the data.
+    Note:   There is no real way to test this memory object as there are too may factors that can affect the
+            values that will be used. Players will have various things applying to their cast times based on
+            their current job, level, traits, job points, merits, etc.
 
-    Players will have varying things that will alter the cast time of anything such as:
-        - Job Traits
-        - Gear
-        - Merits
-        - Job Points
-        - etc.
-
-    Because of this, we can't really test for valid data and just force set things.
+            The following tests will be done on forced values instead.
     --]]
 
     -- Test setting the castbar values..
@@ -70,14 +65,10 @@ function test.exec()
     castbar:SetCastType(2);
 
     -- Test getting the castbar values..
-    local v = castbar:GetMax();
-    assert(v == 100, 'GetMax returned an unexpected value.');
-    v = castbar:GetCount();
-    assert(v == 1, 'GetCount returned an unexpected value.');
-    v = castbar:GetPercent();
-    assert(v == 25, 'GetPercent returned an unexpected value.');
-    v = castbar:GetCastType();
-    assert(v == 2, 'GetCastType returned an unexpected value.');
+    assert(castbar:GetMax() == 100, 'GetMax returned an unexpected value.');
+    assert(castbar:GetCount() == 1, 'GetCount returned an unexpected value.');
+    assert(castbar:GetPercent() == 25, 'GetPercent returned an unexpected value.');
+    assert(castbar:GetCastType() == 2, 'GetCastType returned an unexpected value.');
 end
 
 -- Return the test module table..
