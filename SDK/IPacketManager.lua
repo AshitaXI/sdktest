@@ -21,31 +21,33 @@
 
 require 'common';
 
+local chat  = require 'chat';
 local ffi   = require 'ffi';
 local flags = require 'flags';
 
 --[[
 * The main test module table.
 --]]
-local test = T{};
+local test = T{
+    packets = T{
+        incoming    = T{ 0x01, 0x04, 0x00, 0x00, 0x13, 0x37, 0x13, 0x37 },
+        outgoing    = T{ 0x01, 0x04, 0x00, 0x00, 0x13, 0x37, 0x13, 0x37 },
+        queued      = T{ 0x01, 0x04, 0x00, 0x00, 0xDE, 0xAD, 0xBE, 0xEF },
+    },
+};
 
 --[[
 * Event called when the addon is processing incoming packets.
 *
-* @param {object} args - The event arguments.
+* @param {object} e - The event arguments.
 --]]
-local function packet_in_callback(args)
-    -- Look for the injected test packets..
-    if (args.id == 0x01 and args.injected) then
-        local p = {};
-        for x = 1, string.len(args.data) do
-            p[x] = string.byte(args.data, x);
-        end
+local function packet_in_callback(e)
+    -- Prevent all 0x0001 packets from continuing further..
+    if (e.injected and e.id == 0x0001) then
+        e.blocked = true;
 
-        -- Check for known test packet data..
-        if (p[0x01] == 0x01 and p[0x02] == 0x04 and p[0x05] == 0x13 and p[0x06] == 0x37 and p[0x07] == 0x13 and p[0x08] == 0x37) then
+        if (e.data:sub(0, e.size):bytes():equals(test.packets.incoming)) then
             flags.set('sdktest:packet_in');
-            args.blocked = true;
         end
     end
 end
@@ -53,26 +55,26 @@ end
 --[[
 * Event called when the addon is processing outgoing packets.
 *
-* @param {object} args - The event arguments.
+* @param {object} e - The event arguments.
 --]]
-local function packet_out_callback(args)
-    -- Look for the injected test packets..
-    if (args.id == 0x01) then
-        local p = {};
-        for x = 1, string.len(args.data) do
-            p[x] = string.byte(args.data, x);
+local function packet_out_callback(e)
+    -- Prevent all 0x0001 packets from continuing further..
+    if (e.id == 0x0001) then
+        e.blocked = true;
+
+        -- Packets that are queued using the game functions will have their sync count set..
+        local p = e.data:sub(0, e.size):bytes();
+        if (not e.injected and (p[3] ~= 0 or p[4] ~= 0)) then
+            p[3] = 0;
+            p[4] = 0;
         end
 
-        -- Check for known test packet data.. (AddOutgoingPacket)
-        if (args.injected and (p[0x01] == 0x01 and p[0x02] == 0x04 and p[0x05] == 0x13 and p[0x06] == 0x37 and p[0x07] == 0x13 and p[0x08] == 0x37)) then
+        if (p:equals(test.packets.outgoing)) then
             flags.set('sdktest:packet_out');
-            args.blocked = true;
         end
 
-        -- Check for known test packet data.. (QueuePacket)
-        if (not args.injected and (p[0x01] == 0x01 and p[0x02] == 0x04 and p[0x05] == 0xDE and p[0x06] == 0xAD and p[0x07] == 0xBE and p[0x08] == 0xEF)) then
+        if (p:equals(test.packets.queued)) then
             flags.set('sdktest:packet_out_queued');
-            args.blocked = true;
         end
     end
 end
@@ -111,16 +113,15 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local packetManager = AshitaCore:GetPacketManager();
-    assert(packetManager ~= nil, 'GetPacketManager returned an unexpected value.');
+    local mgr = AshitaCore:GetPacketManager();
+    assert(mgr ~= nil, 'GetPacketManager returned an unexpected value.');
 
-    -- Test injecting packets..
-    packetManager:AddIncomingPacket(0x01, { 0x01, 0x04, 0x00, 0x00, 0x13, 0x37, 0x13, 0x37 });
-    packetManager:AddOutgoingPacket(0x01, { 0x01, 0x04, 0x00, 0x00, 0x13, 0x37, 0x13, 0x37 });
+    -- Test packet injection..
+    mgr:AddIncomingPacket(test.packets.incoming[1], test.packets.incoming);
+    mgr:AddOutgoingPacket(test.packets.outgoing[1], test.packets.outgoing);
 
-    -- Test injecting an outgoing packet using the games actual packet queue functions..
-    packetManager:QueuePacket(0x01, 0x08, 0x00, 0x00, 0x00, function (ptr)
-        -- Use FFI to write to the packets buffer..
+    -- Test outgoing packet injection using the games actual packet queue functions..
+    mgr:QueuePacket(0x01, 0x08, 0x00, 0x00, 0x00, function (ptr)
         local p = ffi.cast('uint8_t*', ptr);
         p[0x04] = 0xDE;
         p[0x05] = 0xAD;
@@ -128,8 +129,10 @@ function test.exec()
         p[0x07] = 0xEF;
     end);
 
-    -- Give tests time to complete and be processed by the client..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IPacketManager\30\81' \30\106waiting 2 seconds to allow packets to send..\30\01");
+    print(chat.header('SDKTest')
+        :append('\30\81\'\30\06IPacketManager\30\81\' ')
+        :append(chat.message('Waiting 2 seconds to allow packets to send..')));
+
     coroutine.sleep(2);
 end
 
