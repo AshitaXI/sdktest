@@ -43,17 +43,17 @@ end
 --]]
 function test.exec()
     -- Validate the main object..
-    local log = LogManager;
-    assert(log ~= nil, 'LogManager was nil; this is a critical error!');
+    local mgr = LogManager;
+    assert(mgr ~= nil, 'LogManager was nil; this is a critical error!');
 
     -- Test logging to the log file..
-    log:Log(5, 'sdktest', 'This is a test message.');
+    mgr:Log(5, 'sdktest', 'This is a test message.');
 
     -- Test the log level property..
-    local prev = log:GetLogLevel();
-    log:SetLogLevel(4);
-    local curr = log:GetLogLevel();
-    log:SetLogLevel(prev);
+    local prev = mgr:GetLogLevel();
+    mgr:SetLogLevel(4);
+    local curr = mgr:GetLogLevel();
+    mgr:SetLogLevel(prev);
 
     assert(curr == 4, 'GetLogLevel returned an unexpected value.');
 end

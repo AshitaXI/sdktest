@@ -37,9 +37,9 @@ end
 --]]
 function test.cleanup()
     -- Cleanup test offsets..
-    local offsetManager = AshitaCore:GetOffsetManager();
-    if (offsetManager ~= nil) then
-        offsetManager:Delete('sdktest');
+    local mgr = AshitaCore:GetOffsetManager();
+    if (mgr ~= nil) then
+        mgr:Delete('sdktest');
     end
 end
 
@@ -48,39 +48,29 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local offsetManager = AshitaCore:GetOffsetManager();
-    assert(offsetManager ~= nil, 'GetOffsetManager returned an unexpected value.');
+    local mgr = AshitaCore:GetOffsetManager();
+    assert(mgr ~= nil, 'GetOffsetManager returned an unexpected value.');
 
     -- Test basic offset usage..
-    offsetManager:Add('sdktest', 'offset1', 1337);
-    local v = offsetManager:Get('sdktest', 'offset1');
-    assert(v == 1337, 'Get returned an unexpected value.');
+    mgr:Add('sdktest', 'offset1', 1337);
+    assert(mgr:Get('sdktest', 'offset1') == 1337, 'Get returned an unexpected value.');
 
     -- Test updating an existing offset..
-    offsetManager:Add('sdktest', 'offset1', 0xBEEF);
-    v = offsetManager:Get('sdktest', 'offset1');
-    assert(v == 0xBEEF, 'Get returned an unexpected value.');
+    mgr:Add('sdktest', 'offset1', 0xBEEF);
+    assert(mgr:Get('sdktest', 'offset1') == 0xBEEF, 'Get returned an unexpected value.');
 
     -- Test deleting an offset..
-    offsetManager:Delete('sdktest', 'offset1');
-    v = offsetManager:Get('sdktest', 'offset1');
-    assert(v == 0, 'Get returned an unexpected value.');
+    mgr:Delete('sdktest', 'offset1');
+    assert(mgr:Get('sdktest', 'offset1') == 0, 'Get returned an unexpected value.');
 
     -- Test deleteing an offset section..
-    offsetManager:Add('sdktest', 'offset1', 1337);
-    offsetManager:Add('sdktest', 'offset2', 0xBEEF);
-    offsetManager:Delete('sdktest');
+    mgr:Add('sdktest', 'offset1', 1337);
+    mgr:Add('sdktest', 'offset2', 0xBEEF);
+    mgr:Delete('sdktest');
 
-    v = offsetManager:Get('sdktest', 'offset1');
-    assert(v == 0, 'Get returned an unexpected value.');
-    v = offsetManager:Get('sdktest', 'offset2');
-    assert(v == 0, 'Get returned an unexpected value.');
+    assert(mgr:Get('sdktest', 'offset1') == 0, 'Get returned an unexpected value.');
+    assert(mgr:Get('sdktest', 'offset2') == 0, 'Get returned an unexpected value.');
 end
 
 -- Return the test module table..
 return test;
-
---[[
-Untested Functions:
-
---]]
