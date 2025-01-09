@@ -159,23 +159,19 @@ function test.exec()
 
     print(chat.header('SDKTest')
         :append('\30\81\'\30\06IChatManager\30\81\' ')
-        :append(chat.message('The next set of tests will require you to interact with the game client!'))
-    );
+        :append(chat.message('The next set of tests will require you to interact with the game client!')));
     print(chat.header('SDKTest')
         :append('\30\81\'\30\06IChatManager\30\81\' ')
-        :append(chat.message('Be sure to read the instructions carefully before continuing with the tests!'))
-    );
+        :append(chat.message('Be sure to read the instructions carefully before continuing with the tests!')));
     print(chat.header('SDKTest')
         :append('\30\81\'\30\06IChatManager\30\81\' ')
-        :append(chat.message('Please open the chat input and clear all current text so it is blank/empty.'))
-    );
+        :append(chat.message('Please open the chat input and clear all current text so it is blank/empty.')));
     print(chat.header('SDKTest')
         :append('\30\81\'\30\06IChatManager\30\81\' ')
         :append(chat.error('DO NOT '))
         :append(chat.message('press enter or close the chat input when you are done, instead press \''))
         :append(chat.color1(6, 'F9'))
-        :append(chat.message('\' when ready.'))
-    );
+        :append(chat.message('\' when ready.')));
 
     -- Wait for the user to press 'F9' for the first set of input tests..
     flags.set('sdktest:input_state_1');
@@ -214,15 +210,13 @@ function test.exec()
     print(chat.header('SDKTest')
         :append('\30\81\'\30\06IChatManager\30\81\' ')
         :append(chat.message('Next, open the chat input and type the following string: '))
-        :append(chat.color1(6, '/sdktest 1234'))
-    );
+        :append(chat.color1(6, '/sdktest 1234')));
     print(chat.header('SDKTest')
         :append('\30\81\'\30\06IChatManager\30\81\' ')
         :append(chat.error('DO NOT '))
         :append(chat.message('press enter or close the chat input when you are done, instead press \''))
         :append(chat.color1(6, 'F9'))
-        :append(chat.message('\' when ready.'))
-    );
+        :append(chat.message('\' when ready.')));
 
     -- Wait for the user to press 'F9' for the second set of input tests..
     flags.set('sdktest:input_state_3');
