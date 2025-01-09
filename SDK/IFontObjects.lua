@@ -21,6 +21,8 @@
 
 require 'common';
 
+local chat = require 'chat';
+
 --[[
 * The main test module table.
 --]]
