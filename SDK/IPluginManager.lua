@@ -45,7 +45,8 @@ end
 function test.init()
     -- Register the test flags..
     local test_flags = T{
-        T{ name = 'sdktest:plugin_event', seen = false },
+        T{ name = 'sdktest:plugin_event',   seen = false },
+        T{ name = 'sdktest:plugin_get',     seen = false },
     };
     flags.register(test_flags);
 
@@ -97,6 +98,11 @@ function test.exec()
     assert(plugin:GetInterfaceVersion() >= 4.0, 'GetInterfaceVersion returned an unexpected value.');
     assert(plugin:GetPriority() == 0, 'GetPriority returned an unexpected value.');
     assert(plugin:GetFlags() == 0x1F, 'GetFlags returned an unexpected value.');
+
+    -- Test getting plugin by name and index..
+    if (table.range(0, mgr:Count()):map(mgr.Get:bind(mgr)):contains(plugin)) then
+        flags.set('sdktest:plugin_get');
+    end
 
     -- Test raising a plugin event..
     mgr:RaiseEvent('sdktest_plugin_event_test', { 0x13, 0x37 });
