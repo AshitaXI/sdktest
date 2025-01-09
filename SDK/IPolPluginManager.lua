@@ -21,6 +21,7 @@
 
 require 'common';
 
+local chat  = require 'chat';
 local flags = require 'flags';
 
 --[[
@@ -31,10 +32,10 @@ local test = T{};
 --[[
 * Event called when the addon is processing plugin events.
 *
-* @param {object} args - The event arguments.
+* @param {object} e - The event arguments.
 --]]
-local function plugin_event_callback(args)
-    if (args.name == 'sdktest_polplugin_event_test') then
+local function plugin_event_callback(e)
+    if (e.name == 'sdktest_polplugin_event_test') then
         flags.set('sdktest:polplugin_event');
     end
 end
@@ -69,61 +70,43 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local ppluginManager = AshitaCore:GetPolPluginManager();
-    assert(ppluginManager ~= nil, 'GetPolPluginManager returned an unexpected value.');
+    local mgr = AshitaCore:GetPolPluginManager();
+    assert(mgr ~= nil, 'GetPolPluginManager returned an unexpected value.');
 
     --[[
-    Test POL plugin manager..
-
-    Note:   Since there is no means of guaranteeing the user will have a specific POL plugin loaded, we cannot thoroughly
-            test things. Instead, we will look for at least one plugin and check its data is at least accessible.
+    Note:   POL plugins are not as common as normal plugins. Due to this, there is no way to guarantee that
+            the client has an expected pol plugin loaded to be tested against. Instead, we will check if any
+            are loaded and just ensure the first one loaded has functioning as expected.
     --]]
 
-    -- Test if any POL plugins are loaded..
-    local c = ppluginManager:Count();
-    if (c == 0) then
+    -- Test if any pol plugins are loaded..
+    if (mgr:Count() == 0) then
+        print(chat.header('SDKTest')
+            :append('\30\81\'\30\06IPolPluginManager\30\81\' ')
+            :append(chat.warning('Warning: '))
+            :append(chat.message('There are no POL plugins currently loaded; cannot continue testing for them.')));
+
         return;
     end
 
-    -- Test requesting a POL plugin.. (by index)
-    local p = ppluginManager:Get(0);
-    assert(p ~= nil, 'Get returned an unexpected value.');
+    -- Obtain the first loaded plugin..
+    local plugin = mgr:Get(0);
+    assert(plugin ~= nil, 'Get returned an unexpected value.');
 
-    -- Test requesting the POL plugin properties..
-    local n = p:GetName();
-    local a = p:GetAuthor();
-    local d = p:GetDescription();
-    local l = p:GetLink();
-    local v = p:GetVersion();
-    local i = p:GetInterfaceVersion();
-    local f = p:GetFlags();
-
-    assert(n ~= nil, 'GetName returned an unexpected value.');
-    assert(a ~= nil, 'GetAuthor returned an unexpected value.');
-    assert(d ~= nil, 'GetDescription returned an unexpected value.');
-    assert(l ~= nil, 'GetLink returned an unexpected value.');
-    assert(v ~= nil, 'GetVersion returned an unexpected value.');
-    assert(i ~= nil, 'GetInterfaceVersion returned an unexpected value.');
-    assert(f ~= nil, 'GetFlags returned an unexpected value.');
+    -- Test the property returns..
+    assert(plugin:GetName() ~= nil, 'GetName returned an unexpected value.');
+    assert(plugin:GetAuthor() ~= nil, 'GetAuthor returned an unexpected value.');
+    assert(plugin:GetDescription() ~= nil, 'GetDescription returned an unexpected value.');
+    assert(plugin:GetLink() ~= nil, 'GetLink returned an unexpected value.');
+    assert(plugin:GetVersion() ~= nil, 'GetVersion returned an unexpected value.');
+    assert(plugin:GetInterfaceVersion() ~= nil, 'GetInterfaceVersion returned an unexpected value.');
+    assert(plugin:GetFlags() ~= nil, 'GetFlags returned an unexpected value.');
 
     -- Test raising a plugin event..
-    ppluginManager:RaiseEvent('sdktest_polplugin_event_test', { 0x13, 0x37 });
+    mgr:RaiseEvent('sdktest_polplugin_event_test', { 0x13, 0x37 });
 
-    -- Give tests time to complete and be processed by the client..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06IPolPluginManager\30\81' \30\106waiting 2 seconds to allow events to send..\30\01");
-    coroutine.sleep(2);
+    coroutine.sleepf(2);
 end
 
 -- Return the test module table..
 return test;
-
---[[
-Test Notes:
-
-    It is not thread-safe to interact with plugins directly, thus most of the plugin system is not exposed to addons.
-
-    Functions such as: Load, Unload, UnloadAll
-
-    Plugin events are also not directly exposed (such as calling a specific plugins HandleCommand event) for the same reason.
-    Plugins should create and expose a custom layer that uses the 'plugin_event' event to listen for and respond to events instead.
---]]

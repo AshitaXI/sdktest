@@ -211,7 +211,10 @@ function test.exec()
 
     -- Test the font size for known good values based on 100% DPI..
     if (size.cx ~= 81 or size.cy ~= 18) then
-        print(chat.header('SDKTest'):append(chat.warn('Warning: ')):append(chat.message('GetTextSize returned an unexpected value; however this is not considered critical.')));
+        print(chat.header('SDKTest')
+            :append('\30\81\'\30\06IFontObjects\30\81\' ')
+            :append(chat.warning('Warning: '))
+            :append(chat.message('GetTextSize returned an unexpected value; however this is not considered critical.')));
     end
 
     --[[
