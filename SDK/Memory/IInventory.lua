@@ -43,199 +43,167 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local memManager = AshitaCore:GetMemoryManager();
-    assert(memManager ~= nil, 'GetMemoryManager returned an unexpected value.');
+    local mgr = AshitaCore:GetMemoryManager();
+    assert(mgr ~= nil, 'GetMemoryManager returned an unexpected value.');
 
     -- Validate the inventory object..
-    local inv = memManager:GetInventory();
+    local inv = mgr:GetInventory();
     assert(inv ~= nil, 'GetInventory returned an unexpected value.');
 
     -- Validate the raw inventory..
-    local i = inv:GetRawStructure();
-    assert(i ~= nil, 'GetRawStructure returned an unexpected value.');
+    local raw = inv:GetRawStructure();
+    assert(raw ~= nil, 'GetRawStructure returned an unexpected value.');
 
     --[[
-    Test the raw structure..
-
-    Note:   Because we cannot guarantee what items a user has, we are only testing that we can make the following calls and
-            only expect a type of return or size of return.
+    Note:   It is not possible to fully test these objects as we cannot ensure what items the player has. Instead,
+            we will only be testing that we can make the function calls and get valid types of returns.
     --]]
 
-    local v = i.Containers;
-    assert(v ~= nil, 'Containers returned an unexpected value.');
-    assert(#v == 18, 'Containers returned an unexpected value.');
-    assert(v[1].Items[1].Id == 65535, 'Containers returned an unexpected value.');
+    -- Test the raw structure fields..
+    assert(raw.Containers ~= nil, 'Containers returned an unexpected value.');
+    assert(#raw.Containers == 18, 'Containers returned an unexpected value.');
+    assert(raw.Containers[1].Items[1].Id == 65535, 'Containers returned an unexpected value.');
 
-    v = i.TreasurePool;
-    assert(v ~= nil, 'TreasurePool returned an unexpected value.');
-    assert(#v == 10, 'TreasurePool returned an unexpected value.');
+    assert(raw.iLookItem ~= nil, 'iLookItem returned an unexpected value.');
+    assert(raw.pItem ~= nil, 'pItem returned an unexpected value.');
 
-    v = i.TreasurePoolStatus;
-    assert(v ~= nil, 'TreasurePoolStatus returned an unexpected value.');
+    assert(raw.TreasurePool ~= nil, 'TreasurePool returned an unexpected value.');
+    assert(#raw.TreasurePool == 10, 'TreasurePool returned an unexpected value.');
+    assert(raw.TreasurePoolStatus ~= nil, 'TreasurePoolStatus returned an unexpected value.');
+    assert(raw.TreasurePoolItemCount ~= nil, 'TreasurePoolItemCount returned an unexpected value.');
 
-    v = i.TreasurePoolItemCount;
-    assert(v ~= nil, 'TreasurePoolItemCount returned an unexpected value.');
+    assert(raw.ContainerMaxCapacity ~= nil, 'ContainerMaxCapacity returned an unexpected value.');
+    assert(#raw.ContainerMaxCapacity == 19, 'ContainerMaxCapacity returned an unexpected value.');
+    assert(raw.ContainerMaxCapacity2 ~= nil, 'ContainerMaxCapacity2 returned an unexpected value.');
+    assert(#raw.ContainerMaxCapacity2 == 18, 'ContainerMaxCapacity2 returned an unexpected value.');
+    assert(raw.ContainerUpdateCounter ~= nil, 'ContainerUpdateCounter returned an unexpected value.');
+    assert(raw.ContainerUpdateFlags ~= nil, 'ContainerUpdateFlags returned an unexpected value.');
+    assert(raw.ContainerUpdateBuffer ~= nil, 'ContainerUpdateBuffer returned an unexpected value.');
+    assert(raw.ContainerUpdateIndex ~= nil, 'ContainerUpdateIndex returned an unexpected value.');
 
-    v = i.ContainerMaxCapacity;
-    assert(v ~= nil, 'ContainerMaxCapacity returned an unexpected value.');
-    assert(#v == 19, 'ContainerMaxCapacity returned an unexpected value.');
+    assert(raw.Equipment ~= nil, 'Equipment returned an unexpected value.');
+    assert(#raw.Equipment == 16, 'Equipment returned an unexpected value.');
 
-    v = i.ContainerMaxCapacity2;
-    assert(v ~= nil, 'ContainerMaxCapacity2 returned an unexpected value.');
-    assert(#v == 18, 'ContainerMaxCapacity2 returned an unexpected value.');
+    assert(raw.DisplayItemSlot ~= nil, 'DisplayItemSlot returned an unexpected value.');
+    assert(raw.DisplayItemPointer ~= nil, 'DisplayItemPointer returned an unexpected value.');
 
-    v = i.ContainerUpdateCounter;
-    assert(v ~= nil, 'ContainerUpdateCounter returned an unexpected value.');
-    v = i.ContainerUpdateFlags;
-    assert(v ~= nil, 'ContainerUpdateFlags returned an unexpected value.');
-    v = i.ContainerUpdateBuffer;
-    assert(v ~= nil, 'ContainerUpdateBuffer returned an unexpected value.');
-    v = i.ContainerUpdateIndex;
-    assert(v ~= nil, 'ContainerUpdateIndex returned an unexpected value.');
+    assert(raw.CheckEquipment ~= nil, 'CheckEquipment returned an unexpected value.');
+    assert(#raw.CheckEquipment == 16, 'CheckEquipment returned an unexpected value.');
+    assert(raw.CheckTargetIndex ~= nil, 'CheckTargetIndex returned an unexpected value.');
+    assert(raw.CheckServerId ~= nil, 'CheckServerId returned an unexpected value.');
+    assert(raw.CheckFlags ~= nil, 'CheckFlags returned an unexpected value.');
+    assert(raw.CheckMainJob ~= nil, 'CheckMainJob returned an unexpected value.');
+    assert(raw.CheckSubJob ~= nil, 'CheckSubJob returned an unexpected value.');
+    assert(raw.CheckMainJobLevel ~= nil, 'CheckMainJobLevel returned an unexpected value.');
+    assert(raw.CheckSubJobLevel ~= nil, 'CheckSubJobLevel returned an unexpected value.');
+    assert(raw.CheckMainJob2 ~= nil, 'CheckMainJob2 returned an unexpected value.');
+    assert(raw.CheckMasteryLevel ~= nil, 'CheckMasteryLevel returned an unexpected value.');
+    assert(raw.CheckMasteryFlags ~= nil, 'CheckMasteryFlags returned an unexpected value.');
+    assert(raw.CheckLinkshellName ~= nil, 'CheckLinkshellName returned an unexpected value.');
+    assert(raw.CheckLinkshellColor ~= nil, 'CheckLinkshellColor returned an unexpected value.');
+    assert(raw.CheckLinkshellIconSetId ~= nil, 'CheckLinkshellIconSetId returned an unexpected value.');
+    assert(raw.CheckLinkshellIconSetIndex ~= nil, 'CheckLinkshellIconSetIndex returned an unexpected value.');
+    assert(raw.CheckBallistaChevronCount ~= nil, 'CheckBallistaChevronCount returned an unexpected value.');
+    assert(raw.CheckBallistaChevronFlags ~= nil, 'CheckBallistaChevronFlags returned an unexpected value.');
+    assert(raw.CheckBallistaFlags ~= nil, 'CheckBallistaFlags returned an unexpected value.');
 
-    v = i.Equipment;
-    assert(v ~= nil, 'Equipment returned an unexpected value.');
-    assert(#v == 16, 'Equipment returned an unexpected value.');
+    assert(raw.UserMessageCount ~= nil, 'UserMessageCount returned an unexpected value.');
+    assert(raw.SearchComment ~= nil, 'SearchComment returned an unexpected value.');
 
-    v = i.DisplayItemSlot;
-    assert(v ~= nil, 'DisplayItemSlot returned an unexpected value.');
-    v = i.DisplayItemPointer;
-    assert(v ~= nil, 'DisplayItemPointer returned an unexpected value.');
-
-    v = i.CheckEquipment;
-    assert(v ~= nil, 'CheckEquipment returned an unexpected value.');
-    assert(#v == 16, 'CheckEquipment returned an unexpected value.');
-
-    v = i.CheckTargetIndex;
-    assert(v ~= nil, 'CheckTargetIndex returned an unexpected value.');
-    v = i.CheckServerId;
-    assert(v ~= nil, 'CheckServerId returned an unexpected value.');
-    v = i.CheckFlags;
-    assert(v ~= nil, 'CheckFlags returned an unexpected value.');
-    v = i.CheckMainJob;
-    assert(v ~= nil, 'CheckMainJob returned an unexpected value.');
-    v = i.CheckSubJob;
-    assert(v ~= nil, 'CheckSubJob returned an unexpected value.');
-    v = i.CheckMainJobLevel;
-    assert(v ~= nil, 'CheckMainJobLevel returned an unexpected value.');
-    v = i.CheckSubJobLevel;
-    assert(v ~= nil, 'CheckSubJobLevel returned an unexpected value.');
-    v = i.CheckMainJob2;
-    assert(v ~= nil, 'CheckMainJob2 returned an unexpected value.');
-    v = i.CheckMasteryLevel;
-    assert(v ~= nil, 'CheckMasteryLevel returned an unexpected value.');
-    v = i.CheckMasteryFlags;
-    assert(v ~= nil, 'CheckMasteryFlags returned an unexpected value.');
-    v = i.CheckLinkshellName;
-    assert(v ~= nil, 'CheckLinkshellName returned an unexpected value.');
-    v = i.CheckLinkshellColor;
-    assert(v ~= nil, 'CheckLinkshellColor returned an unexpected value.');
-    v = i.CheckLinkshellIconSetId;
-    assert(v ~= nil, 'CheckLinkshellIconSetId returned an unexpected value.');
-    v = i.CheckLinkshellIconSetIndex;
-    assert(v ~= nil, 'CheckLinkshellIconSetIndex returned an unexpected value.');
-
-    v = i.SearchComment;
-    assert(v ~= nil, 'SearchComment returned an unexpected value.');
-
-    v = i.CraftStatus;
-    assert(v ~= nil, 'CraftStatus returned an unexpected value.');
-    v = i.CraftCallback;
-    assert(v ~= nil, 'CraftCallback returned an unexpected value.');
-    v = i.CraftTimestampAttempt;
-    assert(v ~= nil, 'CraftTimestampAttempt returned an unexpected value.');
-    v = i.CraftTimestampResponse;
-    assert(v ~= nil, 'CraftTimestampResponse returned an unexpected value.');
+    assert(raw.CraftStatus ~= nil, 'CraftStatus returned an unexpected value.');
+    assert(raw.CraftCallback ~= nil, 'CraftCallback returned an unexpected value.');
+    assert(raw.CraftTimestampAttempt ~= nil, 'CraftTimestampAttempt returned an unexpected value.');
+    assert(raw.CraftTimestampResponse ~= nil, 'CraftTimestampResponse returned an unexpected value.');
 
     --[[
-    Test functions..
+    Function Testing
     --]]
 
-    -- Test obtaining an item.. (Gil)
-    local item = inv:GetContainerItem(0, 0); -- Gil
+    -- Test container functions..
+    local item = inv:GetContainerItem(0, 0);
     assert(item ~= nil, 'GetContainerItem returned an unexpected value.');
-    assert(item.Id == 65535, 'Id returned an unexpected value.');
-    assert(item.Index == 0, 'Index returned an unexpected value.');
-    assert(item.Flags == 0, 'Flags returned an unexpected value.');
+    assert(item.Id == 65535, 'GetContainerItem returned an unexpected value.');
+    assert(item.Index == 0, 'GetContainerItem returned an unexpected value.');
+    assert(item.Count ~= 0, 'GetContainerItem returned an unexpected value. (Oh noes you\'re broke! D:)');
+    assert(item.Flags == 0, 'GetContainerItem returned an unexpected value.');
+    assert(item.Price == 0, 'GetContainerItem returned an unexpected value.');
+    assert(item.Extra ~= nil, 'GetContainerItem returned an unexpected value.');
+    assert(#item.Extra == 28, 'GetContainerItem returned an unexpected value.');
+    local extra = table.range(0, 27):map(function () return 0; end);
+    assert(item.Extra:sub(0, 28):bytes():equals(extra), 'GetContainerItem returned an unexpected value. (Gil should not be augmented..)');
+    assert(inv:GetContainerCount(0) > 0, 'GetContainerCount returned an unexpected value.');
+    assert(inv:GetContainerCountMax(0) > 0, 'GetContainerCountMax returned an unexpected value.');
 
-    -- Test obtaining container sizes..
-    local c = inv:GetContainerCount(0);     -- Inventory
-    local m = inv:GetContainerCountMax(0);  -- Inventory
-    assert(c > 0, 'GetContainerCount returned an unexpected value.');
-    assert(m > 0, 'GetContainerCountMax returned an unexpected value.');
-
-    -- Test the treasure pool..
+    -- Test treasure functions..
     item = inv:GetTreasurePoolItem(0);
     assert(item ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
-    v = inv:GetTreasurePoolStatus();
-    assert(v ~= nil, 'GetTreasurePoolStatus returned an unexpected value.');
-    v = inv:GetTreasurePoolItemCount();
-    assert(v ~= nil, 'GetTreasurePoolItemCount returned an unexpected value.');
+    assert(item.Use ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.ItemId ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.Count ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.Flags ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.Price ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.Extra ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.Status ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.Lot ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.WinningLot ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.WinningEntityServerId ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.WinningEntityTargetIndex ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.WinningEntityName ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.TimeToLive ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(item.DropTime ~= nil, 'GetTreasurePoolItem returned an unexpected value.');
+    assert(inv:GetTreasurePoolStatus() ~= nil, 'GetTreasurePoolStatus returned an unexpected value.');
+    assert(inv:GetTreasurePoolItemCount() ~= nil, 'GetTreasurePoolItemCount returned an unexpected value.');
 
-    -- Test misc properties..
-    v = inv:GetContainerUpdateCounter();
-    assert(v ~= nil, 'GetContainerUpdateCounter returned an unexpected value.');
-    v = inv:GetContainerUpdateFlags();
-    assert(v ~= nil, 'GetContainerUpdateFlags returned an unexpected value.');
-    v = inv:GetDisplayItemSlot();
-    assert(v ~= nil, 'GetDisplayItemSlot returned an unexpected value.');
-    v = inv:GetDisplayItemPointer();
-    assert(v ~= nil, 'GetDisplayItemPointer returned an unexpected value.');
+    -- Test misc functions..
+    assert(inv:GetContainerUpdateCounter() ~= nil, 'GetContainerUpdateCounter returned an unexpected value.');
+    assert(inv:GetContainerUpdateFlags() ~= nil, 'GetContainerUpdateFlags returned an unexpected value.');
+    assert(inv:GetDisplayItemSlot() ~= nil, 'GetDisplayItemSlot returned an unexpected value.');
+    assert(inv:GetDisplayItemPointer() ~= nil, 'GetDisplayItemPointer returned an unexpected value.');
 
-    -- Test the equipment..
+    -- Test equipped item functions..
     item = inv:GetEquippedItem(0);
     assert(item ~= nil, 'GetEquippedItem returned an unexpected value.');
+    assert(item.Slot ~= nil, 'GetEquippedItem returned an unexpected value.');
+    assert(item.Index ~= nil, 'GetEquippedItem returned an unexpected value.');
 
+    -- Test checked functions..
     item = inv:GetCheckEquippedItem(0);
     assert(item ~= nil, 'GetCheckEquippedItem returned an unexpected value.');
-    v = inv:GetCheckTargetIndex();
-    assert(v ~= nil, 'GetCheckTargetIndex returned an unexpected value.');
-    v = inv:GetCheckServerId();
-    assert(v ~= nil, 'GetCheckServerId returned an unexpected value.');
-    v = inv:GetCheckFlags();
-    assert(v ~= nil, 'GetCheckFlags returned an unexpected value.');
-    v = inv:GetCheckMainJob();
-    assert(v ~= nil, 'GetCheckMainJob returned an unexpected value.');
-    v = inv:GetCheckSubJob();
-    assert(v ~= nil, 'GetCheckSubJob returned an unexpected value.');
-    v = inv:GetCheckMainJobLevel();
-    assert(v ~= nil, 'GetCheckMainJobLevel returned an unexpected value.');
-    v = inv:GetCheckSubJobLevel();
-    assert(v ~= nil, 'GetCheckSubJobLevel returned an unexpected value.');
-    v = inv:GetCheckMainJob2();
-    assert(v ~= nil, 'GetCheckMainJob2 returned an unexpected value.');
-    v = inv:GetCheckMasteryLevel();
-    assert(v ~= nil, 'GetCheckMasteryLevel returned an unexpected value.');
-    v = inv:GetCheckMasteryFlags();
-    assert(v ~= nil, 'GetCheckMasteryFlags returned an unexpected value.');
-    v = inv:GetCheckLinkshellName();
-    assert(v ~= nil, 'GetCheckLinkshellName returned an unexpected value.');
-    v = inv:GetCheckLinkshellColor();
-    assert(v ~= nil, 'GetCheckLinkshellColor returned an unexpected value.');
-    v = inv:GetCheckLinkshellIconSetId();
-    assert(v ~= nil, 'GetCheckLinkshellIconSetId returned an unexpected value.');
-    v = inv:GetCheckLinkshellIconSetIndex();
-    assert(v ~= nil, 'GetCheckLinkshellIconSetIndex returned an unexpected value.');
+    assert(item.Slot ~= nil, 'GetCheckEquippedItem returned an unexpected value.');
+    assert(item.Index ~= nil, 'GetCheckEquippedItem returned an unexpected value.');
+    assert(item.Unknown0000 ~= nil, 'GetCheckEquippedItem returned an unexpected value.');
+    assert(item.Extra ~= nil, 'GetCheckEquippedItem returned an unexpected value.');
+    assert(inv:GetCheckTargetIndex() ~= nil, 'GetCheckTargetIndex returned an unexpected value.');
+    assert(inv:GetCheckServerId() ~= nil, 'GetCheckServerId returned an unexpected value.');
+    assert(inv:GetCheckFlags() ~= nil, 'GetCheckFlags returned an unexpected value.');
+    assert(inv:GetCheckMainJob() ~= nil, 'GetCheckMainJob returned an unexpected value.');
+    assert(inv:GetCheckSubJob() ~= nil, 'GetCheckSubJob returned an unexpected value.');
+    assert(inv:GetCheckMainJobLevel() ~= nil, 'GetCheckMainJobLevel returned an unexpected value.');
+    assert(inv:GetCheckSubJobLevel() ~= nil, 'GetCheckSubJobLevel returned an unexpected value.');
+    assert(inv:GetCheckMainJob2() ~= nil, 'GetCheckMainJob2 returned an unexpected value.');
+    assert(inv:GetCheckMasteryLevel() ~= nil, 'GetCheckMasteryLevel returned an unexpected value.');
+    assert(inv:GetCheckMasteryFlags() ~= nil, 'GetCheckMasteryFlags returned an unexpected value.');
+    assert(inv:GetCheckLinkshellName() ~= nil, 'GetCheckLinkshellName returned an unexpected value.');
+    assert(inv:GetCheckLinkshellColor() ~= nil, 'GetCheckLinkshellColor returned an unexpected value.');
+    assert(inv:GetCheckLinkshellIconSetId() ~= nil, 'GetCheckLinkshellIconSetId returned an unexpected value.');
+    assert(inv:GetCheckLinkshellIconSetIndex() ~= nil, 'GetCheckLinkshellIconSetIndex returned an unexpected value.');
+    assert(inv:GetCheckBallistaChevronCount() ~= nil, 'GetCheckBallistaChevronCount returned an unexpected value.');
+    assert(inv:GetCheckBallistaChevronFlags() ~= nil, 'GetCheckBallistaChevronFlags returned an unexpected value.');
+    assert(inv:GetCheckBallistaFlags() ~= nil, 'GetCheckBallistaFlags returned an unexpected value.');
 
-    v = inv:GetSearchComment();
-    assert(v ~= nil, 'GetSearchComment returned an unexpected value.');
+    -- Test search comment functions..
+    assert(inv:GetSearchComment() ~= nil, 'GetSearchComment returned an unexpected value.');
 
-    -- Test the craft functions..
-    v = inv:GetCraftStatus();
-    assert(v ~= nil, 'GetCraftStatus returned an unexpected value.');
-    v = inv:GetCraftCallback();
-    assert(v ~= nil, 'GetCraftCallback returned an unexpected value.');
-    v = inv:GetCraftTimestampAttempt();
-    assert(v ~= nil, 'GetCraftTimestampAttempt returned an unexpected value.');
-    v = inv:GetCraftTimestampResponse();
-    assert(v ~= nil, 'GetCraftTimestampResponse returned an unexpected value.');
+    -- Test crafting functions..
+    assert(inv:GetCraftStatus(), 'GetCraftStatus returned an unexpected value.');
+    assert(inv:GetCraftCallback(), 'GetCraftCallback returned an unexpected value.');
+    assert(inv:GetCraftTimestampAttempt(), 'GetCraftTimestampAttempt returned an unexpected value.');
+    assert(inv:GetCraftTimestampResponse(), 'GetCraftTimestampResponse returned an unexpected value.');
 
-    -- Test the selected item..
-    inv:GetSelectedItemName(); -- Ensure the call works and doesn't fail/error..
-    v = inv:GetSelectedItemId();
-    assert(v ~= nil, 'GetSelectedItemId returned an unexpected value.');
-    v = inv:GetSelectedItemIndex();
-    assert(v ~= nil, 'GetSelectedItemIndex returned an unexpected value.');
+    -- Test selected item functions..
+    inv:GetSelectedItemName(); -- Note: This can return nil, so we just test the call functions without throwing.
+    assert(inv:GetSelectedItemId() ~= nil, 'GetSelectedItemId returned an unexpected value.');
+    assert(inv:GetSelectedItemIndex() ~= nil, 'GetSelectedItemIndex returned an unexpected value.');
 end
 
 -- Return the test module table..
@@ -244,9 +212,8 @@ return test;
 --[[
 Untested Functions:
 
-    Inventory:SetCraftStatus()
-    Inventory:SetCraftCallback()
-    Inventory:SetCraftTimestampAttempt()
-    Inventory:SetCraftTimestampResponse()
-        - We do not want to risk a player ban, so we do not tamper with sensitive data like this.
+    AshitaCore:GetMemoryManager():GetInventory():SetCraftStatus()
+    AshitaCore:GetMemoryManager():GetInventory():SetCraftCallback()
+    AshitaCore:GetMemoryManager():GetInventory():SetCraftTimestampAttempt()
+    AshitaCore:GetMemoryManager():GetInventory():SetCraftTimestampResponse()
 --]]
