@@ -21,10 +21,14 @@
 
 require 'common';
 
+local chat = require 'chat';
+
 --[[
 * The main test module table.
 --]]
-local test = T{};
+local test = T{
+    skip_bind_test = false,
+};
 
 --[[
 * Initializes the test, preparing it for usage.
@@ -36,14 +40,17 @@ end
 * Invoked after the test has completed; allowing it to cleanup any generated resources.
 --]]
 function test.cleanup()
-    -- Cleanup the test keybind..
-    local inputManager = AshitaCore:GetInputManager();
-    if (inputManager ~= nil) then
-        local k = inputManager:GetKeyboard();
-        if (k ~= nil) then
-            k:Unbind(0x58, true, true, false, true, false, false);
-        end
+    if (test.skip_bind_test) then
+        return;
     end
+
+    local mgr = AshitaCore:GetInputManager();
+    if (mgr == nil) then return; end
+    local k = mgr:GetKeyboard();
+    if (k == nil) then return; end
+
+    -- Cleanup the test keybind..
+    k:Unbind(0x58, true, true, false, true, false, false);
 end
 
 --[[
@@ -51,98 +58,116 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local inputManager = AshitaCore:GetInputManager();
-    assert(inputManager ~= nil, 'GetInputManager returned an unexpected value.');
+    local mgr = AshitaCore:GetInputManager();
+    assert(mgr ~= nil, 'GetInputManager returned an unexpected value.');
 
-    -- Validate the sub-objects..
-    local k = inputManager:GetKeyboard();
-    local m = inputManager:GetMouse();
+    -- Validate the manager sub-objects..
+    local c = mgr:GetController();
+    local k = mgr:GetKeyboard();
+    local m = mgr:GetMouse();
+    local x = mgr:GetXInput();
+
+    assert(c ~= nil, 'GetController returned an unexpected value.');
     assert(k ~= nil, 'GetKeyboard returned an unexpected value.');
     assert(m ~= nil, 'GetMouse returned an unexpected value.');
+    assert(x ~= nil, 'GetXInput returned an unexpected value.');
 
     --[[
-    Input Manager Testing
+    InputManager Testing
     --]]
 
-    local prev = inputManager:GetAllowGamepadInBackground();
-    inputManager:SetAllowGamepadInBackground(not prev);
-    local curr = inputManager:GetAllowGamepadInBackground();
-    inputManager:SetAllowGamepadInBackground(prev);
+    local prev = mgr:GetAllowGamepadInBackground();
+    mgr:SetAllowGamepadInBackground(false);
+    assert(mgr:GetAllowGamepadInBackground() == false, 'GetAllowGamepadInBackground returned an unexpected value.');
+    mgr:SetAllowGamepadInBackground(true);
+    assert(mgr:GetAllowGamepadInBackground() == true, 'GetAllowGamepadInBackground returned an unexpected value.');
+    mgr:SetAllowGamepadInBackground(prev);
 
-    assert(prev ~= curr, 'GetAllowGamepadInBackground returned an unexpected value.');
-
-    prev = inputManager:GetDisableGamepad();
-    inputManager:SetDisableGamepad(not prev);
-    curr = inputManager:GetDisableGamepad();
-    inputManager:SetDisableGamepad(prev);
-
-    assert(prev ~= curr, 'GetDisableGamepad returned an unexpected value.');
+    prev = mgr:GetDisableGamepad();
+    mgr:SetDisableGamepad(false);
+    assert(mgr:GetDisableGamepad() == false, 'GetDisableGamepad returned an unexpected value.');
+    mgr:SetDisableGamepad(true);
+    assert(mgr:GetDisableGamepad() == true, 'GetDisableGamepad returned an unexpected value.');
+    mgr:SetDisableGamepad(prev);
 
     --[[
     Keyboard Testing
+
+    Note:   The keybind tests below will make use of the keybind 'CTRL+ALT+F12' when the key is released. However,
+            if this key combination is already bound, then keybind testing will be skipped to not overwrite a users
+            keybinds.
     --]]
 
-    -- Test binding a key-combination.. (CTRL+ALT+F10)
-    k:Bind(0x58, true, true, false, true, false, false, '/echo sdktest bind was pressed.');
-    local bound = k:IsBound(0x58, true, true, false, true, false, false);
-    assert(bound == true, 'IsBound returned an unexpected value.');
+    -- Test if CTRL+ALT+F12 (up) is bound..
+    if (k:IsBound(0x58, false, true, false, true, false, false)) then
+        print(chat.header('SDKTest')
+            :append('\30\81\'\30\06IInputManager\30\81\' ')
+            :append(chat.warning('Warning: '))
+            :append(chat.message('Keybind tests will be skipped due to existing keybind! ('))
+            :append(chat.color1(5, 'CTRL+ALT+F10'))
+            :append(chat.message(')')));
 
-    -- Test unbinding a key-combination..
-    k:Unbind(0x58, true, true, false, true, false, false);
-    bound = k:IsBound(0x58, true, true, false, true, false, false);
-    assert(bound == false, 'IsBound returned an unexpected value.');
+        test.skip_bind_test = true;
+    else
+        -- Test setting a keybind.. (CTRL+ALT+F10)
+        k:Bind(0x58, true, true, false, true, false, false, '/echo sdktest bind was pressed.');
+        assert(k:IsBound(0x58, true, true, false, true, false, false) == true, 'IsBound returned an unexpected value.');
+
+        -- Test removing a keybind..
+        k:Unbind(0x58, true, true, false, true, false, false);
+        assert(k:IsBound(0x58, true, true, false, true, false, false) == false, 'IsBound returned an unexpected value.');
+    end
 
     -- Test key translations..
-    local k1 = k:V2D(0x1B); -- Escape
-    local k2 = k:D2V(0x01); -- Escape
-    local k3 = k:S2D('ESCAPE');
-    local k4 = k:D2S(0x01); -- Escape
+    local key1 = k:V2D(0x1B); -- Escape
+    local key2 = k:D2V(0x01); -- Escape
+    local key3 = k:S2D('ESCAPE');
+    local key4 = k:D2S(0x01); -- Escape
 
-    assert(k1 == 0x01, 'V2D returned an unexpected value.');
-    assert(k2 == 0x1B, 'D2V returned an unexpected value.');
-    assert(k3 == 0x01, 'S2D returned an unexpected value.');
-    assert(string.lower(k4) == 'escape', 'D2S returned an unexpected value.');
+    assert(key1 == 0x01, 'V2D returned an unexpected value.');
+    assert(key2 == 0x1B, 'D2V returned an unexpected value.');
+    assert(key3 == 0x01, 'S2D returned an unexpected value.');
+    assert(key4:lower() == 'escape', 'D2S returned an unexpected value.');
 
     -- Test keyboard properties..
     prev = k:GetWindowsKeyEnabled();
-    k:SetWindowsKeyEnabled(not prev);
-    curr = k:GetWindowsKeyEnabled();
+    k:SetWindowsKeyEnabled(false);
+    assert(k:GetWindowsKeyEnabled() == false, 'GetWindowsKeyEnabled returned an unexpected value.');
+    k:SetWindowsKeyEnabled(true);
+    assert(k:GetWindowsKeyEnabled() == true, 'GetWindowsKeyEnabled returned an unexpected value.');
     k:SetWindowsKeyEnabled(prev);
 
-    assert(prev ~= curr, 'GetWindowsKeyEnabled returned an unexpected value.');
-
     prev = k:GetBlockInput();
-    k:SetBlockInput(not prev);
-    curr = k:GetBlockInput();
+    k:SetBlockInput(false);
+    assert(k:GetBlockInput() == false, 'GetBlockInput returned an unexpected value.');
+    k:SetBlockInput(true);
+    assert(k:GetBlockInput() == true, 'GetBlockInput returned an unexpected value.');
     k:SetBlockInput(prev);
 
-    assert(prev ~= curr, 'GetBlockInput returned an unexpected value.');
-
     prev = k:GetBlockBindsDuringInput();
-    k:SetBlockBindsDuringInput(not prev);
-    curr = k:GetBlockBindsDuringInput();
+    k:SetBlockBindsDuringInput(false);
+    assert(k:GetBlockBindsDuringInput() == false, 'GetBlockBindsDuringInput returned an unexpected value.');
+    k:SetBlockBindsDuringInput(true);
+    assert(k:GetBlockBindsDuringInput() == true, 'GetBlockBindsDuringInput returned an unexpected value.');
     k:SetBlockBindsDuringInput(prev);
 
-    assert(prev ~= curr, 'GetBlockBindsDuringInput returned an unexpected value.');
-
     prev = k:GetSilentBinds();
-    k:SetSilentBinds(not prev);
-    curr = k:GetSilentBinds();
+    k:SetSilentBinds(false);
+    assert(k:GetSilentBinds() == false, 'GetSilentBinds returned an unexpected value.');
+    k:SetSilentBinds(true);
+    assert(k:GetSilentBinds() == true, 'GetSilentBinds returned an unexpected value.');
     k:SetSilentBinds(prev);
-
-    assert(prev ~= curr, 'GetSilentBinds returned an unexpected value.');
 
     --[[
     Mouse Testing
     --]]
 
-    -- Test mouse properties..
     prev = m:GetBlockInput();
-    m:SetBlockInput(not prev);
-    curr = m:GetBlockInput();
+    m:SetBlockInput(false);
+    assert(m:GetBlockInput() == false, 'GetBlockInput returned an unexpected value.');
+    m:SetBlockInput(true);
+    assert(m:GetBlockInput() == true, 'GetBlockInput returned an unexpected value.');
     m:SetBlockInput(prev);
-
-    assert(prev ~= curr, 'GetBlockInput returned an unexpected value.');
 end
 
 -- Return the test module table..
@@ -151,6 +176,13 @@ return test;
 --[[
 Untested Functions:
 
+    AshitaCore:GetInputManager():GetController():QueueButtonData()
+    AshitaCore:GetInputManager():GetController():GetTrackDeadZone()
+    AshitaCore:GetInputManager():GetController():SetTrackDeadZone()
+
     AshitaCore:GetInputManager():GetKeyboard():UnbindAll()
 
+    AshitaCore:GetInputManager():GetXInput():QueueButtonData()
+    AshitaCore:GetInputManager():GetXInput():GetTrackDeadZone()
+    AshitaCore:GetInputManager():GetXInput():SetTrackDeadZone()
 --]]
