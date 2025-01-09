@@ -21,6 +21,7 @@
 
 require 'common';
 
+local chat  = require 'chat';
 local flags = require 'flags';
 
 --[[
@@ -31,38 +32,40 @@ local test = T{};
 --[[
 * Event called when the addon is processing keyboard input. (WNDPROC)
 *
-* @param {object} args - The event arguments.
+* @param {object} e - The event arguments.
 --]]
-local function key_callback(args)
+local function key_callback(e)
+    -- Look for F9 key presses..
+    local isF9      = e.wparam == 0x78;
+    local isKeyDown = not (bit.band(e.lparam, bit.lshift(0x8000, 0x10)) == bit.lshift(0x8000, 0x10));
+
+    if (not isF9 or not isKeyDown) then
+        return;
+    end
+
     -- Do nothing if the test state isn't ready..
     if (not flags.is_set('sdktest:autofollow_step1')) then
         return;
     end
 
-    -- Look for F9 key presses..
-    local isKeyDown = not (bit.band(args.lparam, bit.lshift(0x8000, 0x10)) == bit.lshift(0x8000, 0x10));
-    if (args.wparam == 0x78 and isKeyDown) then
-        -- Block the event..
-        args.blocked = true;
+    -- Block all F9 presses during this testing..
+    e.blocked = true;
 
-        -- Part 1: Wait for user to stand still and press F9..
-        if (flags.is_set('sdktest:autofollow_step1') and not flags.is_set('sdktest:autofollow_step2')) then
-            flags.set('sdktest:autofollow_step2');
-            return;
-        end
+    -- Part 1: Wait for user to stand still and press F9..
+    if (flags.is_set('sdktest:autofollow_step1') and not flags.is_set('sdktest:autofollow_step2')) then
+        flags.set('sdktest:autofollow_step2');
+        return;
+    end
 
-        -- Part 2: Wait for the user to move and press F9..
-        if (flags.is_set('sdktest:autofollow_step3') and not flags.is_set('sdktest:autofollow_step4')) then
-            flags.set('sdktest:autofollow_step4');
-            return;
-        end
+    -- Part 2: Wait for the user to move and press F9..
+    if (flags.is_set('sdktest:autofollow_step3') and not flags.is_set('sdktest:autofollow_step4')) then
+        flags.set('sdktest:autofollow_step4');
+        return;
+    end
 
-        -- Part 3: Wait for the user to target an npc and press F9..
-        if (flags.is_set('sdktest:autofollow_step6') and not flags.is_set('sdktest:autofollow_step7')) then
-            flags.set('sdktest:autofollow_step7');
-            return;
-        end
-
+    -- Part 3: Wait for the user to target an npc and press F9..
+    if (flags.is_set('sdktest:autofollow_step6') and not flags.is_set('sdktest:autofollow_step7')) then
+        flags.set('sdktest:autofollow_step7');
         return;
     end
 end
@@ -103,138 +106,182 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local memManager = AshitaCore:GetMemoryManager();
-    assert(memManager ~= nil, 'GetMemoryManager returned an unexpected value.');
+    local mgr = AshitaCore:GetMemoryManager();
+    assert(mgr ~= nil, 'GetMemoryManager returned an unexpected value.');
 
     -- Validate the auto follow object..
-    local follow = memManager:GetAutoFollow();
+    local follow = mgr:GetAutoFollow();
     assert(follow ~= nil, 'GetAutoFollow returned an unexpected value.');
 
-    -- Toggle the camera..
-    local c1 = follow:GetIsFirstPersonCamera();
-    if (c1 == 0) then
+    -- Test the first person camera flag..
+    local cam = follow:GetIsFirstPersonCamera();
+    if (cam == 0) then
         follow:SetIsFirstPersonCamera(1);
+        assert(follow:GetIsFirstPersonCamera() == 1, 'GetIsFirstPersonCamera returned an unexpected value.');
     else
         follow:SetIsFirstPersonCamera(0);
+        assert(follow:GetIsFirstPersonCamera() == 0, 'GetIsFirstPersonCamera returned an unexpected value.');
     end
-    coroutine.sleep(1);
-    local c2 = follow:GetIsFirstPersonCamera();
-    assert(c2 ~= c1, 'GetIsFirstPersonCamera returned an unexpected value.');
-    follow:SetIsFirstPersonCamera(c1);
-    coroutine.sleep(1);
+    coroutine.sleepf(1);
+    assert(follow:GetIsFirstPersonCamera() ~= cam, 'GetIsFirstPersonCamera returned an unexpected value.');
+    follow:SetIsFirstPersonCamera(cam);
+    coroutine.sleepf(1);
 
-    -- Target the local player..
-    local p = GetPlayerEntity();
-    assert(p ~= nil, 'GetPlayerEntity returned an unexpected value.');
-    AshitaCore:GetMemoryManager():GetTarget():SetTarget(p.TargetIndex, false);
-    coroutine.sleep(2);
+    -- Target the local player entity..
+    local player = GetPlayerEntity();
+    assert(player ~= nil, 'GetPlayerEntity returned an unexpected value.');
+    AshitaCore:GetMemoryManager():GetTarget():SetTarget(player.TargetIndex, false);
+    coroutine.sleepf(1);
 
-    local ti = follow:GetTargetIndex();
-    local si = follow:GetTargetServerId();
-    assert(p.TargetIndex == ti, 'GetTargetIndex returned an unexpected value.');
-    assert(p.ServerId == si, 'GetTargetServerId returned an unexpected value.');
+    -- Test the follow target information..
+    assert(follow:GetTargetIndex() == player.TargetIndex, 'GetTargetIndex returned an unexpected value.');
+    assert(follow:GetTargetServerId() == player.ServerId, 'GetTargetServerId returned an unexpected value.');
 
-    -- Test positional auto-following..
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106To begin testing auto-following; stand still so your position can be recorded..\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
+    --[[
+    Auto Follow Position Testing
+    --]]
 
-    -- Set the test state and wait for the user to press F9..
+    print(chat.header('SDKTest')
+        :append('\30\81\'\30\06Memory.IAutoFollow\30\81\' ')
+        :append(chat.message('The next set of tests will require you to interact with the game client!')));
+    print(chat.header('SDKTest')
+        :append('\30\81\'\30\06Memory.IAutoFollow\30\81\' ')
+        :append(chat.message('Be sure to read the instructions carefully before continuing with the tests!')));
+    print(chat.header('SDKTest')
+        :append('\30\81\'\30\06Memory.IAutoFollow\30\81\' ')
+        :append(chat.message('Stand completely still so that your current position can be recorded. Then press '))
+        :append(chat.color1(6, 'F9'))
+        :append(chat.message('\' when ready.')));
+
+    -- Wait for the user to press 'F9'..
     flags.set('sdktest:autofollow_step1');
     while (not flags.is_set('sdktest:autofollow_step2')) do
-        coroutine.sleep(1);
+        coroutine.sleepf(5);
     end
 
     -- Store the players current position..
-    local x = p.Movement.LocalPosition.X;
-    local y = p.Movement.LocalPosition.Y;
-    local z = p.Movement.LocalPosition.Z;
+    local x = player.Movement.LocalPosition.X;
+    local z = player.Movement.LocalPosition.Z;
+    local y = player.Movement.LocalPosition.Y;
 
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Next, run away from your previous position about 10 yalms, in a clear path..\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
+    print(chat.header('SDKTest')
+        :append('\30\81\'\30\06Memory.IAutoFollow\30\81\' ')
+        :append(chat.message('Next, run about 10 yalms forward from your position. in a clear path. Then press '))
+        :append(chat.color1(6, 'F9'))
+        :append(chat.message('\' when ready.')));
 
-    -- Set the test state and wait for the user to press F9..
+    -- Wait for the user to press 'F9'..
     flags.set('sdktest:autofollow_step3');
     while (not flags.is_set('sdktest:autofollow_step4')) do
-        coroutine.sleep(1);
+        coroutine.sleepf(5);
     end
 
-    -- Run to the previous position until we're close to it..
+    -- Run back to the players previous position until we're close to it..
     while (not flags.is_set('sdktest:autofollow_step5')) do
-        -- Calculate the position delta of the players current and previous positions..
-        local d_x = x - p.Movement.LocalPosition.X;
-        local d_y = y - p.Movement.LocalPosition.Y;
-        local d_z = z - p.Movement.LocalPosition.Z;
+        local delta_x = x - player.Movement.LocalPosition.X;
+        local delta_z = z - player.Movement.LocalPosition.Z;
+        local delta_y = y - player.Movement.LocalPosition.Y;
 
-        -- Update the auto-follow deltas..
-        follow:SetFollowDeltaX(d_x);
-        follow:SetFollowDeltaY(d_y);
-        follow:SetFollowDeltaZ(d_z);
+        -- Set the auto-follow position delta..
+        follow:SetFollowDeltaX(delta_x);
+        follow:SetFollowDeltaZ(delta_z);
+        follow:SetFollowDeltaY(delta_y);
+
+        -- Start running towards the position..
         follow:SetIsAutoRunning(1);
 
-        -- Test we can get the current deltas..
-        local f_x = follow:GetFollowDeltaX();
-        local f_y = follow:GetFollowDeltaY();
-        local f_z = follow:GetFollowDeltaZ();
-        assert(f_x ~= nil, 'GetFollowDeltaX returned an unexpected value.');
-        assert(f_y ~= nil, 'GetFollowDeltaY returned an unexpected value.');
-        assert(f_z ~= nil, 'GetFollowDeltaZ returned an unexpected value.');
+        -- Test obtaining the current delta information..
+        assert(follow:GetFollowDeltaX() ~= nil, 'GetFollowDeltaX returned an unexpected value.');
+        assert(follow:GetFollowDeltaZ() ~= nil, 'GetFollowDeltaZ returned an unexpected value.');
+        assert(follow:GetFollowDeltaY() ~= nil, 'GetFollowDeltaY returned an unexpected value.');
 
-        -- Ensure we are running..
-        local r = follow:GetIsAutoRunning();
-        assert(r == 1, 'GetIsAutoRunning returned an unexpected value.');
+        -- Test that the player is running..
+        assert(follow:GetIsAutoRunning(), 'GetIsAutoRunning returned an unexpected value.')
 
-        -- Sleep to let the player run some..
         coroutine.sleepf(5);
 
-        -- Check if we're close enough to stop following..
-        local dist = math.sqrt(math.pow(d_x, 2) + math.pow(d_z, 2));
-        if (dist <= 0.3) then
-            -- Stop auto-following..
+        -- Wait until the player is back near their original position..
+        if (math.sqrt(math.pow(delta_x, 2) + math.pow(delta_y, 2) + math.pow(delta_z, 2)) <= 0.4) then
             follow:SetIsAutoRunning(0);
-
-            -- Set the flag..
             flags.set('sdktest:autofollow_step5');
         end
     end
 
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Next, target and stand next to an NPC.\30\01");
-    print("\30\81[\30\06SDKTest\30\81] \30\81'\30\06Memory.IAutoFollow\30\81' \30\106Press \30\06F9\30\106 when ready.\30\01");
+    print(chat.header('SDKTest')
+        :append('\30\81\'\30\06Memory.IAutoFollow\30\81\' ')
+        :append(chat.message('Next, stand next to an NPC (within 10 yalms) and target them. Then press '))
+        :append(chat.color1(6, 'F9'))
+        :append(chat.message('\' when ready.')));
 
-    -- Set the test state and wait for the user to press F9..
+    -- Wait for the user to press 'F9'..
     flags.set('sdktest:autofollow_step6');
     while (not flags.is_set('sdktest:autofollow_step7')) do
-        coroutine.sleep(1);
+        coroutine.sleepf(5);
     end
 
-    -- Validate the players target..
-    ti = follow:GetTargetIndex();
-    assert(ti ~= 0, 'GetTargetIndex returned an unexpected value.');
-    assert(ti ~= p.TargetIndex, 'GetTargetIndex returned an unexpected value.');
+    -- Test the player has a valid target..
+    assert(follow:GetTargetIndex() ~= 0, 'GetTargetIndex returned an unexpected value.');
+    assert(follow:GetTargetIndex() ~= player.TargetIndex, 'GetTargetIndex returned an unexpected value.');
+    assert(follow:GetTargetServerId() ~= 0, 'GetTargetServerId returned an unexpected value.');
+    assert(bit.band(follow:GetTargetServerId(), 0x01000000) == 0x01000000, 'GetTargetServerId returned an unexpected value.');
 
-    -- Get the target entity..
-    local t = GetEntity(ti);
-    assert(t ~= nil, 'GetEntity returned an unexpected value.');
+    -- Test the targeted entity is valid..
+    local entity = GetEntity(follow:GetTargetIndex());
+    assert(entity ~= nil, 'GetEntity returned an unexpected value.');
+    assert(entity.Type ~= 0, 'Entity Type returned an unexpected value.');
+    assert(entity.Distance < 10, 'Entity Distance returned an unexpected value.');
 
-    -- Validate the target entity is an npc..
-    assert(t.Type ~= 0, 'Type returned an unexpected value.');
-    assert(t.Distance < 10, 'Target is too far away, please get closer..');
+    --[[
+    Note:   The following is to test the target lock-on feature. This feature only works when the client is not currently
+            in first-person view. If they are, then the lock-on flag is not updated by the client. Therefore, we must ensure
+            that the player is not in first-person mode when this test is being performed.
+    --]]
 
-    -- Lock onto the target if we aren't already..
-    local l = follow:GetIsCameraLockedOn();
-    if (l == 0) then
+    -- Ensure the player is not in first person mode for the following tests..
+    while (follow:GetIsFirstPersonCamera() == 1) do
+        follow:SetIsFirstPersonCamera(0);
+        coroutine.sleepf(1);
+    end
+
+    -- Test locking onto the target..
+    local lock = follow:GetIsCameraLockedOn();
+    AshitaCore:GetChatManager():QueueCommand(1, '/lockon');
+    coroutine.sleepf(5);
+    assert(follow:GetIsCameraLockedOn() ~= lock, 'GetIsCameraLockedOn returned an unexpected value.');
+    AshitaCore:GetChatManager():QueueCommand(1, '/lockon');
+    coroutine.sleepf(5);
+    assert(follow:GetIsCameraLockedOn() == lock, 'GetIsCameraLockedOn returned an unexpected value.');
+
+    -- Ensure we are locked onto the target..
+    lock = follow:GetIsCameraLockedOn();
+    if (lock == 0) then
         AshitaCore:GetChatManager():QueueCommand(1, '/lockon');
-        coroutine.sleep(1);
+        coroutine.sleepf(5);
+        assert(follow:GetIsCameraLockedOn() == 1, 'GetIsCameraLockedOn returned an unexpected value.');
     end
 
-    -- Attempt to follow the npc..
+    -- Follow the target..
     AshitaCore:GetChatManager():QueueCommand(1, '/follow');
-    coroutine.sleep(1);
+    coroutine.sleepf(5);
 
-    -- Test that we are following the target..
-    ti = follow:GetFollowTargetIndex();
-    si = follow:GetFollowTargetServerId();
-    assert(ti == t.TargetIndex, 'GetFollowTargetIndex returned an unexpected value.');
-    assert(si == t.ServerId, 'GetFollowTargetServerId returned an unexpected value.');
+    assert(follow:GetFollowTargetIndex() == entity.TargetIndex, 'GetFollowTargetIndex returned an unexpected value.');
+    assert(follow:GetFollowTargetServerId() == entity.ServerId, 'GetFollowTargetServerId returned an unexpected value.');
+
+    coroutine.sleepf(5);
+
+    -- Cancel auto-follow and restore the client to normal..
+    follow:SetIsAutoRunning(0);
+    follow:SetIsFirstPersonCamera(0);
+    follow:SetIsCameraLocked(0);
+    follow:SetIsCameraLockedOn(0);
+
+    coroutine.sleepf(5);
+
+    -- Ensure we are locked onto the target..
+    if (follow:GetIsCameraLockedOn() == 1) then
+        AshitaCore:GetChatManager():QueueCommand(1, '/lockon');
+        coroutine.sleepf(5);
+    end
 end
 
 -- Return the test module table..
