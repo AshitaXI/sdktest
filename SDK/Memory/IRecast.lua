@@ -43,20 +43,20 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local memManager = AshitaCore:GetMemoryManager();
-    assert(memManager ~= nil, 'GetMemoryManager returned an unexpected value.');
+    local mgr = AshitaCore:GetMemoryManager();
+    assert(mgr ~= nil, 'GetMemoryManager returned an unexpected value.');
 
     -- Validate the recast object..
-    local recast = memManager:GetRecast();
+    local recast = mgr:GetRecast();
     assert(recast ~= nil, 'GetRecast returned an unexpected value.');
 
     -- Test the recast functions..
-    local v = recast:GetAbilityTimerId(0);
-    assert(v ~= nil, 'GetAbilityTimerId returned an unexpected value.');
-    v = recast:GetAbilityTimer(0);
-    assert(v ~= nil, 'GetAbilityTimer returned an unexpected value.');
-    v = recast:GetSpellTimer(0);
-    assert(v ~= nil, 'GetSpellTimer returned an unexpected value.');
+    assert(recast:GetAbilityRecast(0) ~= nil, 'GetAbilityRecast returned an unexpected value.');
+    assert(recast:GetAbilityCalc1(0) ~= nil, 'GetAbilityCalc1 returned an unexpected value.');
+    assert(recast:GetAbilityTimerId(0) ~= nil, 'GetAbilityTimerId returned an unexpected value.');
+    assert(recast:GetAbilityCalc2(0) ~= nil, 'GetAbilityCalc2 returned an unexpected value.');
+    assert(recast:GetAbilityTimer(0) ~= nil, 'GetAbilityTimer returned an unexpected value.');
+    assert(recast:GetSpellTimer(0) ~= nil, 'GetSpellTimer returned an unexpected value.');
 end
 
 -- Return the test module table..
