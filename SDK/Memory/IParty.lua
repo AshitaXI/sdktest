@@ -43,179 +43,153 @@ end
 --]]
 function test.exec()
     -- Validate the manager object..
-    local memManager = AshitaCore:GetMemoryManager();
-    assert(memManager ~= nil, 'GetMemoryManager returned an unexpected value.');
+    local mgr = AshitaCore:GetMemoryManager();
+    assert(mgr ~= nil, 'GetMemoryManager returned an unexpected value.');
 
     -- Validate the party object..
-    local party = memManager:GetParty();
+    local party = mgr:GetParty();
     assert(party ~= nil, 'GetParty returned an unexpected value.');
 
-    --[[
-    Test the alliance information methods..
-    --]]
+    -- Validate the raw inventory..
+    local raw = party:GetRawStructure();
+    assert(raw ~= nil, 'GetRawStructure returned an unexpected value.');
 
-    local v = party:GetAllianceLeaderServerId();
-    assert(v ~= nil, 'GetAllianceLeaderServerId returned an unexpected value.');
-    v = party:GetAlliancePartyLeaderServerId1();
-    assert(v ~= nil, 'GetAlliancePartyLeaderServerId1 returned an unexpected value.');
-    v = party:GetAlliancePartyLeaderServerId2();
-    assert(v ~= nil, 'GetAlliancePartyLeaderServerId2 returned an unexpected value.');
-    v = party:GetAlliancePartyLeaderServerId3();
-    assert(v ~= nil, 'GetAlliancePartyLeaderServerId3 returned an unexpected value.');
-    v = party:GetAlliancePartyVisible1();
-    assert(v ~= nil, 'GetAlliancePartyVisible1 returned an unexpected value.');
-    v = party:GetAlliancePartyVisible2();
-    assert(v ~= nil, 'GetAlliancePartyVisible2 returned an unexpected value.');
-    v = party:GetAlliancePartyVisible3();
-    assert(v ~= nil, 'GetAlliancePartyVisible3 returned an unexpected value.');
-    v = party:GetAlliancePartyMemberCount1();
-    assert(v ~= nil, 'GetAlliancePartyMemberCount1 returned an unexpected value.');
-    v = party:GetAlliancePartyMemberCount2();
-    assert(v ~= nil, 'GetAlliancePartyMemberCount2 returned an unexpected value.');
-    v = party:GetAlliancePartyMemberCount3();
-    assert(v ~= nil, 'GetAlliancePartyMemberCount3 returned an unexpected value.');
-    v = party:GetAllianceInvited();
-    assert(v ~= nil, 'GetAllianceInvited returned an unexpected value.');
+    -- Test the raw party structure fields..
+    assert(raw.Members ~= nil, 'GetRawStructure returned an unexpected value.');
+    assert(#raw.Members == 18, 'GetRawStructure returned an unexpected value.');
 
-    -- Get the player entity..
-    local e = GetPlayerEntity();
-    assert(e ~= nil, 'GetPlayerEntity returned an unexpected value.');
+    for x = 1, 18 do
+        if (x == 1) then
+            assert(raw.Members[x].AllianceInfo ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.AllianceLeaderServerId ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyLeaderServerId1 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyLeaderServerId2 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyLeaderServerId3 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyVisible1 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyVisible2 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyVisible3 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyMemberCount1 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyMemberCount2 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.PartyMemberCount3 ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.Invited ~= nil, 'GetRawStructure returned an unexpected value.');
+            assert(raw.Members[x].AllianceInfo.Unknown0000 ~= nil, 'GetRawStructure returned an unexpected value.');
+        end
+        assert(raw.Members[x].Index ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MemberNumber ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].Name ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].ServerId ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].TargetIndex ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].LastUpdatedTimestamp ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].HP ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MP ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].TP ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].HPPercent ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MPPercent ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].Zone ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].Zone2 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].Unknown0000 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].FlagMask ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].TreasureLots ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(#raw.Members[x].TreasureLots == 10, 'GetRawStructure returned an unexpected value.');
+        for y = 1, 10 do
+            assert(raw.Members[x].TreasureLots[y] ~= nil, 'GetRawStructure returned an unexpected value.');
+        end
+        assert(raw.Members[x].MonstrosityItemId ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MonstrosityPrefixFlag1 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MonstrosityPrefixFlag2 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MonstrosityName ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MainJob ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MainJobLevel ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].SubJob ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].SubJobLevel ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].Unknown0001 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].ServerId2 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].HPPercent2 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].MPPercent2 ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].IsActive ~= nil, 'GetRawStructure returned an unexpected value.');
+        assert(raw.Members[x].Unknown0002 ~= nil, 'GetRawStructure returned an unexpected value.');
+    end
 
-    --[[
-    Test the party information methods..
-    --]]
+    -- Obtain the player entity..
+    local player = GetPlayerEntity();
+    assert(player ~= nil, 'GetPlayerEntity returned an unexpected value.');
 
-    v = party:GetMemberIndex(0);
-    assert(v ~= nil, 'GetMemberIndex returned an unexpected value.');
-    v = party:GetMemberNumber(0);
-    assert(v ~= nil, 'GetMemberNumber returned an unexpected value.');
-    v = party:GetMemberName(0);
-    assert(v ~= nil, 'GetMemberName returned an unexpected value.');
-    assert(v == e.Name, 'GetMemberName returned an unexpected value.');
-    v = party:GetMemberServerId(0);
-    assert(v ~= nil, 'GetMemberServerId returned an unexpected value.');
-    assert(v == e.ServerId, 'GetMemberServerId returned an unexpected value.');
-    v = party:GetMemberTargetIndex(0);
-    assert(v ~= nil, 'GetMemberTargetIndex returned an unexpected value.');
-    assert(v == e.TargetIndex, 'GetMemberTargetIndex returned an unexpected value.');
-    v = party:GetMemberLastUpdatedTimestamp(0);
-    assert(v ~= nil, 'GetMemoryLastUpdatedTimestamp returned an unexpected value.');
-    v = party:GetMemberHP(0);
-    assert(v ~= nil, 'GetMemberHP returned an unexpected value.');
-    v = party:GetMemberMP(0);
-    assert(v ~= nil, 'GetMemberMP returned an unexpected value.');
-    v = party:GetMemberTP(0);
-    assert(v ~= nil, 'GetMemberTP returned an unexpected value.');
-    v = party:GetMemberHPPercent(0);
-    assert(v ~= nil, 'GetMemberHPPercent returned an unexpected value.');
-    v = party:GetMemberMPPercent(0);
-    assert(v ~= nil, 'GetMemberMPPercent returned an unexpected value.');
-    v = party:GetMemberZone(0);
-    assert(v ~= nil, 'GetMemberZone returned an unexpected value.');
-    v = party:GetMemberZone2(0);
-    assert(v ~= nil, 'GetMemberZone2 returned an unexpected value.');
-    v = party:GetMemberFlagMask(0);
-    assert(v ~= nil, 'GetMemberFlagMask returned an unexpected value.');
-    v = party:GetMemberTreasureLot(0, 0);
-    assert(v ~= nil, 'GetMemberTreasureLot returned an unexpected value.');
-    v = party:GetMemberMonstrosityItemId(0);
-    assert(v ~= nil, 'GetMemberMonstrosityItemId returned an unexpected value.');
-    v = party:GetMemberMonstrosityPrefixFlag1(0);
-    assert(v ~= nil, 'GetMemberMonstrosityPrefixFlag1 returned an unexpected value.');
-    v = party:GetMemberMonstrosityPrefixFlag2(0);
-    assert(v ~= nil, 'GetMemberMonstrosityPrefixFlag2 returned an unexpected value.');
-    v = party:GetMemberMonstrosityName(0);
-    assert(v ~= nil, 'GetMemberMonstrosityName returned an unexpected value.');
-    v = party:GetMemberMainJob(0);
-    assert(v ~= nil, 'GetMemberMainJob returned an unexpected value.');
-    v = party:GetMemberMainJobLevel(0);
-    assert(v ~= nil, 'GetMemberMainJobLevel returned an unexpected value.');
-    v = party:GetMemberSubJob(0);
-    assert(v ~= nil, 'GetMemberSubJob returned an unexpected value.');
-    v = party:GetMemberSubJobLevel(0);
-    assert(v ~= nil, 'GetMemberSubJobLevel returned an unexpected value.');
-    v = party:GetMemberServerId2(0);
-    assert(v ~= nil, 'GetMemberServerId2 returned an unexpected value.');
-    v = party:GetMemberHPPercent2(0);
-    assert(v ~= nil, 'GetMemberHPPercent2 returned an unexpected value.');
-    v = party:GetMemberMPPercent2(0);
-    assert(v ~= nil, 'GetMemberMPPercent2 returned an unexpected value.');
-    v = party:GetMemberIsActive(0);
-    assert(v ~= nil, 'GetMemberIsActive returned an unexpected value.');
-    assert(v == 1, 'GetMemberIsActive returned an unexpected value.');
+    -- Validate the party information against the player entity information..
+    assert(raw.Members[1].Name == player.Name, 'GetRawStructure returned an unexpected value.');
+    assert(raw.Members[1].ServerId == player.ServerId, 'GetRawStructure returned an unexpected value.');
+    assert(raw.Members[1].TargetIndex == player.TargetIndex, 'GetRawStructure returned an unexpected value.');
+    assert(raw.Members[1].HPPercent == player.HPPercent, 'GetRawStructure returned an unexpected value.');
+    assert(raw.Members[1].IsActive == 1, 'GetRawStructure returned an unexpected value.');
 
-    -- Test status icons..
-    v = party:GetStatusIconsServerId(0);
-    assert(v ~= nil, 'GetStatusIconsServerId returned an unexpected value.');
-    v = party:GetStatusIconsTargetIndex(0);
-    assert(v ~= nil, 'GetStatusIconsTargetIndex returned an unexpected value.');
-    v = party:GetStatusIconsBitMask(0);
-    assert(v ~= nil, 'GetStatusIconsBitMask returned an unexpected value.');
-    v = party:GetStatusIcons(0);
-    assert(v ~= nil, 'GetStatusIcons returned an unexpected value.');
-    assert(#v == 32, 'GetStatusIcons returned an unexpected value.');
+    -- Test the raw status icons structure fields..
+    raw = party:GetRawStructureStatusIcons();
+    assert(raw ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
+    assert(#raw.Members == 5, 'GetRawStructureStatusIcons returned an unexpected value.');
+
+    for x = 1, 5 do
+        assert(raw.Members[x].ServerId ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
+        assert(raw.Members[x].TargetIndex ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
+        assert(raw.Members[x].BitMask ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
+        assert(raw.Members[x].StatusIcons ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
+        assert(#raw.Members[x].StatusIcons == 32, 'GetRawStructureStatusIcons returned an unexpected value.');
+    end
 
     --[[
-    Test the raw structure..
+    Function Testing
     --]]
 
-    -- Validate the raw party..
-    local p = party:GetRawStructure();
-    assert(p ~= nil, 'GetRawStructure returned an unexpected value.');
-    assert(#p.Members == 18, 'GetRawStructure returned an unexpected value.');
+    -- Test alliance functions..
+    assert(party:GetAllianceLeaderServerId() ~= nil, 'GetAllianceLeaderServerId returned an unexpected value.');
+    assert(party:GetAlliancePartyLeaderServerId1() ~= nil, 'GetAlliancePartyLeaderServerId1 returned an unexpected value.');
+    assert(party:GetAlliancePartyLeaderServerId2() ~= nil, 'GetAlliancePartyLeaderServerId2 returned an unexpected value.');
+    assert(party:GetAlliancePartyLeaderServerId3() ~= nil, 'GetAlliancePartyLeaderServerId3 returned an unexpected value.');
+    assert(party:GetAlliancePartyVisible1() ~= nil, 'GetAlliancePartyVisible1 returned an unexpected value.');
+    assert(party:GetAlliancePartyVisible2() ~= nil, 'GetAlliancePartyVisible2 returned an unexpected value.');
+    assert(party:GetAlliancePartyVisible3() ~= nil, 'GetAlliancePartyVisible3 returned an unexpected value.');
+    assert(party:GetAlliancePartyMemberCount1() ~= nil, 'GetAlliancePartyMemberCount1 returned an unexpected value.');
+    assert(party:GetAlliancePartyMemberCount2() ~= nil, 'GetAlliancePartyMemberCount2 returned an unexpected value.');
+    assert(party:GetAlliancePartyMemberCount3() ~= nil, 'GetAlliancePartyMemberCount3 returned an unexpected value.');
+    assert(party:GetAllianceInvited() ~= nil, 'GetAllianceInvited returned an unexpected value.');
 
-    -- Testing alliance data..
-    assert(p.Members[1].AllianceInfo ~= nil, 'AllianceInfo returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.AllianceLeaderServerId ~= nil, 'AllianceLeaderServerId returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyLeaderServerId1 ~= nil, 'PartyLeaderServerId1 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyLeaderServerId2 ~= nil, 'PartyLeaderServerId2 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyLeaderServerId3 ~= nil, 'PartyLeaderServerId3 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyVisible1 ~= nil, 'PartyVisible1 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyVisible2 ~= nil, 'PartyVisible2 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyVisible3 ~= nil, 'PartyVisible3 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyMemberCount1 ~= nil, 'PartyMemberCount1 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyMemberCount1 >= 1, 'PartyMemberCount1 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyMemberCount2 ~= nil, 'PartyMemberCount2 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.PartyMemberCount3 ~= nil, 'PartyMemberCount3 returned an unexpected value.');
-    assert(p.Members[1].AllianceInfo.Invited ~= nil, 'Invited returned an unexpected value.');
+    for x = 0, 17 do
+        assert(party:GetMemberIndex(x) ~= nil, 'GetMemberIndex returned an unexpected value.');
+        assert(party:GetMemberNumber(x) ~= nil, 'GetMemberNumber returned an unexpected value.');
+        party:GetMemberName(x); -- Note: This can return nil, so we just test the call functions without throwing.
+        assert(party:GetMemberServerId(x) ~= nil, 'GetMemberServerId returned an unexpected value.');
+        assert(party:GetMemberTargetIndex(x) ~= nil, 'GetMemberTargetIndex returned an unexpected value.');
+        assert(party:GetMemberLastUpdatedTimestamp(x) ~= nil, 'GetMemberLastUpdatedTimestamp returned an unexpected value.');
+        assert(party:GetMemberHP(x) ~= nil, 'GetMemberHP returned an unexpected value.');
+        assert(party:GetMemberMP(x) ~= nil, 'GetMemberMP returned an unexpected value.');
+        assert(party:GetMemberTP(x) ~= nil, 'GetMemberTP returned an unexpected value.');
+        assert(party:GetMemberHPPercent(x) ~= nil, 'GetMemberHPPercent returned an unexpected value.');
+        assert(party:GetMemberMPPercent(x) ~= nil, 'GetMemberMPPercent returned an unexpected value.');
+        assert(party:GetMemberZone(x) ~= nil, 'GetMemberZone returned an unexpected value.');
+        assert(party:GetMemberZone2(x) ~= nil, 'GetMemberZone2 returned an unexpected value.');
+        assert(party:GetMemberFlagMask(x) ~= nil, 'GetMemberFlagMask returned an unexpected value.');
+        for y = 0, 9 do
+            assert(party:GetMemberTreasureLot(x, y) ~= nil, 'GetMemberTreasureLot returned an unexpected value.');
+        end
+        assert(party:GetMemberMonstrosityItemId(x) ~= nil, 'GetMemberMonstrosityItemId returned an unexpected value.');
+        assert(party:GetMemberMonstrosityPrefixFlag1(x) ~= nil, 'GetMemberMonstrosityPrefixFlag1 returned an unexpected value.');
+        assert(party:GetMemberMonstrosityPrefixFlag2(x) ~= nil, 'GetMemberMonstrosityPrefixFlag2 returned an unexpected value.');
+        party:GetMemberMonstrosityName(x); -- Note: This can return nil, so we just test the call functions without throwing.
+        assert(party:GetMemberMainJob(x) ~= nil, 'GetMemberMainJob returned an unexpected value.');
+        assert(party:GetMemberMainJobLevel(x) ~= nil, 'GetMemberMainJobLevel returned an unexpected value.');
+        assert(party:GetMemberSubJob(x) ~= nil, 'GetMemberSubJob returned an unexpected value.');
+        assert(party:GetMemberSubJobLevel(x) ~= nil, 'GetMemberSubJobLevel returned an unexpected value.');
+        assert(party:GetMemberServerId2(x) ~= nil, 'GetMemberServerId2 returned an unexpected value.');
+        assert(party:GetMemberHPPercent2(x) ~= nil, 'GetMemberHPPercent2 returned an unexpected value.');
+        assert(party:GetMemberMPPercent2(x) ~= nil, 'GetMemberMPPercent2 returned an unexpected value.');
+        assert(party:GetMemberIsActive(x) ~= nil, 'GetMemberIsActive returned an unexpected value.');
+    end
 
-    -- Testing the local players data..
-    assert(p.Members[1].Index ~= nil, 'Index returned an unexpected value.');
-    assert(p.Members[1].MemberNumber ~= nil, 'MemberNumber returned an unexpected value.');
-    assert(p.Members[1].Name == e.Name, 'Name returned an unexpected value.');
-    assert(p.Members[1].ServerId == e.ServerId, 'ServerId returned an unexpected value.');
-    assert(p.Members[1].TargetIndex == e.TargetIndex, 'TargetIndex returned an unexpected value.');
-    assert(p.Members[1].LastUpdatedTimestamp ~= nil, 'LastUpdatedTimestamp returned an unexpected value.');
-    assert(p.Members[1].HP ~= nil, 'HP returned an unexpected value.');
-    assert(p.Members[1].MP ~= nil, 'MP returned an unexpected value.');
-    assert(p.Members[1].TP ~= nil, 'TP returned an unexpected value.');
-    assert(p.Members[1].HPPercent ~= nil, 'HPPercent returned an unexpected value.');
-    assert(p.Members[1].MPPercent ~= nil, 'MPPercent returned an unexpected value.');
-    assert(p.Members[1].Zone ~= nil, 'Zone returned an unexpected value.');
-    assert(p.Members[1].Zone2 ~= nil, 'Zone2 returned an unexpected value.');
-    assert(p.Members[1].FlagMask ~= nil, 'FlagMask returned an unexpected value.');
-    assert(p.Members[1].TreasureLots ~= nil, 'TreasureLots returned an unexpected value.');
-    assert(p.Members[1].MonstrosityItemId ~= nil, 'MonstrosityItemId returned an unexpected value.');
-    assert(p.Members[1].MonstrosityPrefixFlag1 ~= nil, 'MonstrosityPrefixFlag1 returned an unexpected value.');
-    assert(p.Members[1].MonstrosityPrefixFlag2 ~= nil, 'MonstrosityPrefixFlag2 returned an unexpected value.');
-    assert(p.Members[1].MonstrosityName ~= nil, 'MonstrosityName returned an unexpected value.');
-    assert(p.Members[1].MainJob ~= nil, 'MainJob returned an unexpected value.');
-    assert(p.Members[1].MainJobLevel ~= nil, 'MainJobLevel returned an unexpected value.');
-    assert(p.Members[1].SubJob ~= nil, 'SubJob returned an unexpected value.');
-    assert(p.Members[1].SubJobLevel ~= nil, 'SubJobLevel returned an unexpected value.');
-    assert(p.Members[1].ServerId2 ~= nil, 'ServerId2 returned an unexpected value.');
-    assert(p.Members[1].HPPercent2 ~= nil, 'HPPercent2 returned an unexpected value.');
-    assert(p.Members[1].MPPercent2 ~= nil, 'MPPercent2 returned an unexpected value.');
-    assert(p.Members[1].IsActive == 1, 'IsActive returned an unexpected value.');
-
-    -- Test the raw party status icons..
-    local picons = party:GetRawStructureStatusIcons();
-    assert(picons ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
-    assert(#picons.Members == 5, 'GetRawStructureStatusIcons returned an unexpected value.');
-    assert(picons.Members[1].ServerId ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
-    assert(picons.Members[1].TargetIndex ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
-    assert(picons.Members[1].BitMask ~= nil, 'GetRawStructureStatusIcons returned an unexpected value.');
-    assert(#picons.Members[1].StatusIcons == 32, 'GetRawStructureStatusIcons returned an unexpected value.');
+    for x = 0, 4 do
+        assert(party:GetStatusIconsServerId(x) ~= nil, 'GetStatusIconsServerId returned an unexpected value.');
+        assert(party:GetStatusIconsTargetIndex(x) ~= nil, 'GetStatusIconsTargetIndex returned an unexpected value.');
+        assert(party:GetStatusIconsBitMask(x) ~= nil, 'GetStatusIconsBitMask returned an unexpected value.');
+        assert(party:GetStatusIcons(x) ~= nil, 'GetStatusIcons returned an unexpected value.');
+        assert(#party:GetStatusIcons(x) == 32, 'GetStatusIcons returned an unexpected value.');
+    end
 end
 
 -- Return the test module table..
