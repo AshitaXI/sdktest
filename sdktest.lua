@@ -27,43 +27,40 @@ addon.link      = 'https://ashitaxi.com/';
 
 require 'common';
 
---[[
-* Table of known tests that are registered to be available.
---]]
-local registered_tests = T{
-    -- Main Objects
-    T{ cmd = '/sdktest ashitacore',             file = 'SDK.IAshitaCore',               desc = 'Tests the IAshitaCore object.' },
-    T{ cmd = '/sdktest logmanager',             file = 'SDK.ILogManager',               desc = 'Tests the ILogManager object.' },
+local chat = require 'chat';
 
-    -- Managers
-    T{ cmd = '/sdktest chatmanager',            file = 'SDK.IChatManager',              desc = 'Tests the IChatManager object.' },
-    T{ cmd = '/sdktest configurationmanager',   file = 'SDK.IConfigurationManager',     desc = 'Tests the IConfigurationManager object.' },
-    T{ cmd = '/sdktest fontobjects',            file = 'SDK.IFontObjects',              desc = 'Tests the font and primitive objects.' },
-    T{ cmd = '/sdktest guimanager',             file = 'SDK.IGuiManager',               desc = 'Tests the IGuiManager object.' },
-    T{ cmd = '/sdktest inputmanager',           file = 'SDK.IInputManager',             desc = 'Tests the IInputManager and related objects.' },
-    T{ cmd = '/sdktest offsetmanager',          file = 'SDK.IOffsetManager',            desc = 'Tests the IOffsetManager object.' },
-    T{ cmd = '/sdktest packetmanager',          file = 'SDK.IPacketManager',            desc = 'Tests the IPacketManager object.' },
-    T{ cmd = '/sdktest pluginmanager',          file = 'SDK.IPluginManager',            desc = 'Tests the IPluginManager object.' },
-    T{ cmd = '/sdktest pointermanager',         file = 'SDK.IPointerManager',           desc = 'Tests the IPointerManager object.' },
-    T{ cmd = '/sdktest polpluginmanager',       file = 'SDK.IPolPluginManager',         desc = 'Tests the IPolPluginManager object.' },
-    T{ cmd = '/sdktest resourcemanager',        file = 'SDK.IResourceManager',          desc = 'Tests the IResourceManager object.' },
+-- sdktest Variables
+local sdktest = T{
+    test_counter = 0,
+    tests = T{
+        -- Main Objects
+        T{ name = 'ashitacore',             file = 'SDK.IAshitaCore',           desc = 'Tests the IAshitaCore interface.', },
+        T{ name = 'logmanager',             file = 'SDK.ILogManager',           desc = 'Tests the ILogManager interface.', },
 
-    -- Memory Manager and Objects
-    T{ cmd = '/sdktest memory autofollow',      file = 'SDK.Memory.IAutoFollow',        desc = 'Tests the IAutoFollow memory object.' },
-    T{ cmd = '/sdktest memory castbar',         file = 'SDK.Memory.ICastBar',           desc = 'Tests the ICastBar memory object.' },
-    T{ cmd = '/sdktest memory entity',          file = 'SDK.Memory.IEntity',            desc = 'Tests the IEntity memory object.' },
-    T{ cmd = '/sdktest memory inventory',       file = 'SDK.Memory.IInventory',         desc = 'Tests the IInventory memory object.' },
-    T{ cmd = '/sdktest memory party',           file = 'SDK.Memory.IParty',             desc = 'Tests the IParty memory object.' },
-    T{ cmd = '/sdktest memory player',          file = 'SDK.Memory.IPlayer',            desc = 'Tests the IPlayer memory object.' },
-    T{ cmd = '/sdktest memory recast',          file = 'SDK.Memory.IRecast',            desc = 'Tests the IRecast memory object.' },
-    T{ cmd = '/sdktest memory target',          file = 'SDK.Memory.ITarget',            desc = 'Tests the ITarget memory object.' },
+        -- Manager Objects
+        T{ name = 'chatmanager',            file = 'SDK.IChatManager',          desc = 'Tests the IChatManager interface.', },
+        T{ name = 'configurationmanager',   file = 'SDK.IConfigurationManager', desc = 'Tests the IConfigurationManager interface.', },
+        T{ name = 'fontobjects',            file = 'SDK.IFontObjects',          desc = 'Tests the IFontManager, IFontObject, IPrimitiveManager and IPrimitiveObject interface.', },
+        T{ name = 'guimanager',             file = 'SDK.IGuiManager',           desc = 'Tests the IGuiManager interface.', },
+        T{ name = 'inputmanager',           file = 'SDK.IInputManager',         desc = 'Tests the IInputManager interface.', },
+        T{ name = 'offsetmanager',          file = 'SDK.IOffsetManager',        desc = 'Tests the IOffsetManager interface.', },
+        T{ name = 'packetmanager',          file = 'SDK.IPacketManager',        desc = 'Tests the IPacketManager interface.', },
+        T{ name = 'pluginmanager',          file = 'SDK.IPluginManager',        desc = 'Tests the IPluginManager interface.', },
+        T{ name = 'pointermanager',         file = 'SDK.IPointerManager',       desc = 'Tests the IPointerManager interface.', },
+        T{ name = 'polpluginmanager',       file = 'SDK.IPolPluginManager',     desc = 'Tests the IPolPluginManager interface.', },
+        T{ name = 'resourcemanager',        file = 'SDK.IResourceManager',      desc = 'Tests the IResourceManager interface.', },
+
+        -- Memory Manager Objects
+        T{ name = 'memory autofollow',      file = 'SDK.Memory.IAutoFollow',    desc = 'Tests the IAutoFollow memory interface.', },
+        T{ name = 'memory castbar',         file = 'SDK.Memory.ICastBar',       desc = 'Tests the ICastBar memory interface.', },
+        T{ name = 'memory entity',          file = 'SDK.Memory.IEntity',        desc = 'Tests the IEntity memory interface.', },
+        T{ name = 'memory inventory',       file = 'SDK.Memory.IInventory',     desc = 'Tests the IInventory memory interface.', },
+        T{ name = 'memory party',           file = 'SDK.Memory.IParty',         desc = 'Tests the IParty memory interface.', },
+        T{ name = 'memory player',          file = 'SDK.Memory.IPlayer',        desc = 'Tests the IPlayer memory interface.', },
+        T{ name = 'memory recast',          file = 'SDK.Memory.IRecast',        desc = 'Tests the IRecast memory interface.', },
+        T{ name = 'memory target',          file = 'SDK.Memory.ITarget',        desc = 'Tests the ITarget memory interface.', },
+    },
 };
-
---[[
-* Counter used to help with potential race conditions if tests are spammed.
---]]
-local test_counter = 0;
-
 --[[
 * Condition helper that will return the given true (t) or false (f) value based on the condition.
 *
@@ -80,147 +77,129 @@ local function fif(condition, t, f)
 end
 
 --[[
-* Executes the given test entry.
+* Executes the given test.
 *
-* @param {table} test - The test entry from the 'registered_tests' table.
-* @param {number} cnt - An incremented counter to help prevent race-conditions when executing tests.
+* @param {table} t - The test to execute.
 * @return {bool} True on success, false otherwise.
 --]]
-local function run_test(test, cnt)
-    -- Remove the preload state of the test and test flags helper..
-    package.loaded[test.file] = nil;
+local function run_test(t)
+    -- Reset the state of preloaded packages..
+    package.loaded[t.file]  = nil;
     package.loaded['flags'] = nil;
 
-    -- Require the test file..
-    local m = nil;
+    local test = nil;
     local res, err = pcall(function ()
-        m = require(test.file);
+        -- Require the test file..
+        test = require(t.file);
 
-        -- Validate the test files return..
-        assert(type(m) == 'table', 'test file returned an unexpected value.');
-        assert(m.init ~= nil, 'test is missing expected \'init\' function.');
-        assert(m.exec ~= nil, 'test is missing expected \'exec\' function.');
-        assert(m.cleanup ~= nil, 'test is missing expected \'cleanup\' function.');
+        -- Validate the test table..
+        assert(type(test) == 'table', 'Test file returned an unexpected value.');
+        assert(test.init ~= nil, 'Test file missing required \'init\' function.');
+        assert(test.exec ~= nil, 'Test file missing required \'exec\' function.');
+        assert(test.cleanup ~= nil, 'Test file missing required \'cleanup\' function.');
     end);
 
-    if (m == nil) then
-        print('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76Test file failed to load properly.\30\01');
+    -- Validate the test file loaded..
+    if (test == nil or not res or err ~= nil) then
+        print(chat.header('SDKTest'):append(chat.message('Error: ')):append(chat.error('Test file failed to load properly.')));
         if (err) then
-            print(('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01'):fmt(err));
+            print(chat.header('SDKTest'):append(chat.message('Error: ')):append(chat.error(err)));
         end
         return false;
     end
 
-    -- Execute the test..
+    local errors = T{};
+
+    -- Execute the test initialization function..
+    res, err = pcall(function () test.init(sdktest.test_counter); end);
+    if (not res) then errors:append(err); end
+
     if (res) then
-        local errors = T{};
-
-        -- Initialize the test..
-        res, err = pcall(function ()
-            m.init(cnt);
-        end);
-
-        -- Store the error if one is present..
-        if (not res) then
-            table.insert(errors, err);
-        end
-
         -- Execute the test..
-        if (res) then
-            res, err = pcall(function ()
-                m.exec(cnt);
-            end);
-
-            -- Store the error if one is present..
-            if (not res) then
-                table.insert(errors, err);
-            end
-        end
-
-        -- Cleanup the test..
-        res, err = pcall(function ()
-            m.cleanup(cnt);
-        end);
-
-        -- Store the error if one is present..
-        if (not res) then
-            table.insert(errors, err);
-        end
-
-        -- Display the test results..
-        res = fif(#errors == 0, '\30\02Ok!', '\30\76Error!');
-        print(('\30\81[\30\06SDKTest\30\81] \30\106Tests for \30\81\'\30\06%s\30\81\' \30\106completed: %s\30\01'):fmt(test.file:sub(5, -1), res));
-
-        -- Display errors if any are present..
-        errors:each(function (v)
-            print(('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01'):fmt(v));
-        end);
-
-        return #errors == 0;
+        res, err = pcall(function () test.exec(sdktest.test_counter); end);
+        if (not res) then errors:append(err); end
     end
 
-    -- Failed to require and validate the test file..
-    print(('\30\81[\30\06SDKTest\30\81] \30\106Error: \30\76%s\30\01'):fmt(err));
-    return false;
+    -- Execute the test cleanup function..
+    res, err = pcall(function () test.cleanup(sdktest.test_counter); end);
+    if (not res) then errors:append(err); end
+
+    -- Display the test results..
+    res = fif(#errors == 0, chat.success('Ok!'), chat.error('Error!'));
+    print(chat.header('SDKTest')
+        :append(chat.message('Tests for '))
+        :append(chat.color1(81, '\''))
+        :append(chat.success(t.name))
+        :append(chat.color1(81, '\''))
+        :append(chat.message(' completed: '))
+        :append(res));
+
+    -- Display the test errors..
+    errors:each(function (v)
+        print(chat.header('SDKTest')
+            :append(chat.error('Error: '))
+            :append(chat.error(v)));
+    end);
+
+    return #errors == 0;
 end
 
 --[[
-* Event called when the addon is being loaded.
+* event: load
+* desc : Event called when the addon is being loaded.
 --]]
 ashita.events.register('load', 'sdktest_main_load', function ()
-    -- Display the about info..
-    print('\30\81[\30\06SDKTest\30\81] \30\71---------------------------------------------------------------------------\30\01');
-    print('\30\81[\30\06SDKTest\30\81] \30\106Welcome to the Ashita SDK Lua Binding Test Addon!\30\01');
-    print('\30\81[\30\06SDKTest\30\81] \30\71---------------------------------------------------------------------------\30\01');
-    print('\30\81[\30\06SDKTest\30\81] \30\106This addon is used to test and validate the various Lua bindings.\30\01');
-    print('\30\81[\30\06SDKTest\30\81] \30\106Feel free to browse the source and learn how to make use of Ashita\'s SDK from Lua!\30\01');
-    print('\30\81[\30\06SDKTest\30\81] \30\71---------------------------------------------------------------------------\30\01');
-
-    -- Display the command usage..
-    print('\30\81[\30\06SDKTest\30\81] \30\106The following commands are valid to execute a test:\30\01');
-    registered_tests:each(function (v)
-        print(('\30\81[\30\06SDKTest\30\81] \30\106Command: \30\02%s\30\106 - \30\03%s\03\01'):fmt(v.cmd, v.desc));
+    print(chat.header('SDKTest'):append(chat.color1(71, '---------------------------------------------------------------------------')));
+    print(chat.header('SDKTest'):append(chat.message('Welcome to the Ashita SDK Lua Binding Test Addon!')));
+    print(chat.header('SDKTest'):append(chat.color1(71, '---------------------------------------------------------------------------')));
+    print(chat.header('SDKTest'):append(chat.message('This addon is used to test and validate the various Lua bindings.')));
+    print(chat.header('SDKTest'):append(chat.message('Feel free to browse the source and learn how to make use of Ashita\'s SDK from Lua!')));
+    print(chat.header('SDKTest'):append(chat.color1(71, '---------------------------------------------------------------------------')));
+    print(chat.header('SDKTest'):append(chat.message('The following commands are valid to execute a test:')));
+    sdktest.tests:each(function (v)
+        print(chat.header('SDKTest'):append(chat.message('Command: ')):append(chat.success('/sdktest ' .. v.name)):append(chat.message(' - ')):append(chat.color1(3, v.desc)));
     end);
-    print(('\30\81[\30\06SDKTest\30\81] \30\106Command: \30\02%s\30\106 - \30\03%s\03\01'):fmt('/sdktest all', 'Runs all tests.'));
+    print(chat.header('SDKTest'):append(chat.message('Command: ')):append(chat.success('/sdktest all')):append(chat.message(' - ')):append(chat.color1(3, 'Runs all registered tests.')));
 end);
 
 --[[
-* Event called when the addon is processing a command.
-*
-* @param {table} e - The command arguments table.
+* event: command
+* desc : Event called when the addon is processing a command.
 --]]
 ashita.events.register('command', 'sdktest_main_command', function (e)
-    -- Execute a specific test..
-    for _, v in pairs(registered_tests) do
-        if (v.cmd:ieq(e.command)) then
-            -- Mark the command as handled..
-            e.blocked = true;
-
-            -- Step the test counter..
-            test_counter = test_counter + 1;
-
-            -- Run the test..
-            run_test(v, test_counter);
-            return;
-        end
+    local args = e.command:args();
+    if (#args == 0 or args[1] ~= '/sdktest') then
+        return;
     end
 
-    -- Execute all tests..
-    if (e.command:ieq('/sdktest all')) then
-        -- Mark the command as handled..
-        e.blocked = true;
+    e.blocked = true;
 
-        for _, v in pairs(registered_tests) do
-            -- Step the test counter..
-            test_counter = test_counter + 1;
-
-            -- Run the test..
-            if (not run_test(v, test_counter)) then
+    -- Handle: /sdktest all - Runs all registered tests.
+    if (#args == 2 and args[2]:any('all')) then
+        for _, v in pairs(sdktest.tests) do
+            sdktest.test_counter = sdktest.test_counter + 1;
+            if (not run_test(v)) then
                 return;
             end
         end
-
-        print('\30\81[\30\06SDKTest\30\81] \30\106All tests completed!\30\01');
+        print(chat.header('SDKTest'):append(chat.success('All tests completed!')));
         return;
     end
+
+    -- Handle: /sdktest <test name>
+    local cmd = args:slice(2, #args):join(' ');
+    local _, v = sdktest.tests:find_if(function (v)
+        return v.name:ieq(cmd);
+    end);
+
+    if (v == nil) then
+        print(chat.header('SDKTest')
+            :append(chat.error('Unknown test requested: '))
+            :append(chat.message(e.command:sub(10, -1))));
+        return;
+    end
+
+    sdktest.test_counter = sdktest.test_counter + 1;
+
+    run_test(v);
 end);
