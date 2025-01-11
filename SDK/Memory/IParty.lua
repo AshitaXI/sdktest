@@ -50,7 +50,7 @@ function test.exec()
     local party = mgr:GetParty();
     assert(party ~= nil, 'GetParty returned an unexpected value.');
 
-    -- Validate the raw inventory..
+    -- Validate the raw party object..
     local raw = party:GetRawStructure();
     assert(raw ~= nil, 'GetRawStructure returned an unexpected value.');
 

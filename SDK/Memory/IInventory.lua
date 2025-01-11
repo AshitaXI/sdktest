@@ -50,7 +50,7 @@ function test.exec()
     local inv = mgr:GetInventory();
     assert(inv ~= nil, 'GetInventory returned an unexpected value.');
 
-    -- Validate the raw inventory..
+    -- Validate the raw inventory object..
     local raw = inv:GetRawStructure();
     assert(raw ~= nil, 'GetRawStructure returned an unexpected value.');
 

@@ -50,7 +50,7 @@ function test.exec()
     local player = mgr:GetPlayer();
     assert(player ~= nil, 'GetPlayer returned an unexpected value.');
 
-    -- Validate the raw player..
+    -- Validate the raw player object..
     local raw = player:GetRawStructure();
     assert(raw ~= nil, 'GetRawStructure returned an unexpected value.');
 
